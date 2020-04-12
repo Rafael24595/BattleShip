@@ -437,7 +437,7 @@ public class DataManager {
             
         }
 
-        file = new File("File" + saveSlotInt + ".bin");
+        file = new File("File" + saveSlotInt + ".txt");
         
         try {
             
