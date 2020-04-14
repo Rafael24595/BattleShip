@@ -23,16 +23,7 @@ public class Principal {
         myBoat.add(Menu.opening());
         
         Menu.menu(myBoat.get(0));
-        
-        Date date = new Date();
-        
-        String ds = date.toString();
-        
-        String d = date.toString().substring(4, 7) + "-" + date.toString().substring(8, 10) + "-" + date.toString().substring(25, 29) + "-" + date.toString().substring(11, 16);
-        
-        System.out.println(ds);
-        
-        System.out.println(d);
+
     }
     
 }
