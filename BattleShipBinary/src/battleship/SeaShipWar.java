@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package battleship;
 
-import java.util.ArrayList;
+package battleship;
 
 public class SeaShipWar extends SeaShip {
     
@@ -14,7 +8,7 @@ public class SeaShipWar extends SeaShip {
 
     int attackUpgrade[] = new int[]{ 70, 80, 90, 100, -1, 300, 500, 1000};
     int defenseUpgrade[] = new int[]{ 70, 80, 90, 100, -1, 250, 500, 700};
-    int bedsUpgrade[] = new int[]{15, 30, 40, 55, -1, 300, 500, 1000};
+    int bedsUpgrade[] = new int[]{15, 25, 35, 40, -1, 300, 500, 1000};
 
     public SeaShipWar() {
     }

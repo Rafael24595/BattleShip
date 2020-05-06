@@ -1,14 +1,13 @@
 
 package battleship;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public abstract class SeaShip {
@@ -20,37 +19,34 @@ public abstract class SeaShip {
     private final int attack = 100;
     private final int defense = 75;
     private final int speed = 10;
-    private final int defensePlus [] = {15, 2};
+    private int defend [] = new int [2];                    /*DefensePlusPercentage - LoopTime*/
     private int health;
     private int armor;
     private int cannon_ammo;
     private int musket_ammo;
     private int gold;
-    
     private int turn;
+    private int saveSlot;
+    private int newGame; /*Useless*/
+    
     private int maxHealth;
-    private int maxArmor = 100;
-    private int maxAmmo [] = {20, 20};
-    private int defend [] = new int [2];
+    private final int maxArmor = 100;
+    private final int maxAmmo [] = {20, 20};                /*CannonMaxAmmo - MusketMaxAmmo*/
+    private final int defensePlus [] = {15, 2};             /*DefensePlusPercentage - LoopTime*/
+    private final int lot[] = {10, 10, 25};                 /*CannonAmmoPack - MusketAmmoPack - ArmorPiecePack*/
+    private final int prices [] = {100, 50, 25, 2, 100};    /*CannonAmmoPrice - MusketAmmoPrice - WorkerUnitPrice - FixUnitPrice - ArmorPrice*/
     
     private double attackP;
     private double defenseP;
     private int speedP;
-    private int beds []; /*First for all beds - Second for ocupied beds*/
-    
-    private String countryS [] = {"España", "Francia", "Gran Bretaña"};
-    
-    private int saveSlot;
-    
-    private int newGame;
+    private int beds [] = new int [4];                                    /*AvailableBeds - MaxBeds(*) - OcupiedBeds*/
     
     private int attackUpgrade[];
     private int defenseUpgrade[];
     private int bedsUpgrade[];
-    
-    private int lot[] = {10, 10, 25};
-    private int prices [] = {100, 50, 25, 2, 100};
 
+    /*Empty Constructor*/
+    
     public SeaShip() {
     }
     
@@ -58,24 +54,16 @@ public abstract class SeaShip {
     
     public SeaShip(String name, String subname, int country, int saveSlot, int newGame) {
        
-        worker_list = new ArrayList<Worker>();
+        worker_list = new ArrayList<>();
         
         this.name = name;
         this.subname = subname;
         this.country = country;
         
-        health = 100;
         armor = 0;
         cannon_ammo = 10;
         musket_ammo = 10;
         gold = 100;
-        
-        turn = 0;
-        
-        attackP = 0;
-        defenseP = 0;
-        speedP = 0;
-        beds = new int [4];
         
         this.saveSlot = saveSlot;
         this.newGame = newGame;
@@ -85,7 +73,7 @@ public abstract class SeaShip {
     
     public SeaShip(String name, String subname, int country, int health, int armor, int cannon_ammo, int musket_ammo, int gold, double attackP, double defenseP, int[] beds, int saveSlot, int newGame) {
        
-        this.worker_list = new ArrayList<Worker>();
+        this.worker_list = new ArrayList<>();
         
         this.name = name;
         this.subname = subname;
@@ -97,11 +85,8 @@ public abstract class SeaShip {
         this.musket_ammo = musket_ammo;
         this.gold = gold;
         
-        turn = 0;
-        
         this.attackP = attackP;
         this.defenseP = defenseP;
-        this.speedP = speedP;
         this.beds = beds;
         
         this.saveSlot = saveSlot;
@@ -194,10 +179,6 @@ public abstract class SeaShip {
 
     public int[] getBeds() {
         return beds;
-    }
-
-    public String[] getCountryS() {
-        return countryS;
     }
 
     public int getSaveSlot() {
@@ -297,221 +278,204 @@ public abstract class SeaShip {
         beds[position] = value;
     }
     
-    public void setBeds(int[] beds) {
-        for (int i = 0; i < this.beds.length; i++) {
-            this.beds[i] = beds[i];
-        }
-    }
-
-    public void setCountryS(String[] countryS) {
-        this.countryS = countryS;
-    }
-
-    public abstract void fixBoat(int i);
-    
-    public abstract void upgradeAttack(int i);
-
-    public abstract void upgradeBeds(int i);
-    
-    public abstract void upgradeDefense(int i);
-    
-    public SeaShip createDummyShip(int random) {
+    public SeaShip createDummyShip(int random) throws IOException {
         
         Scanner keyboard = new Scanner(System.in);
         
-        SeaShipSchooner CPU = new SeaShipSchooner("Null", "Null", -1, -1, -1);
-        
-        ArrayList data = new ArrayList();
-        
         ArrayList<SeaShip> CPU_Boat = new ArrayList<SeaShip>();
         
-        CPU_Boat.add(0, CPU);
+        ArrayList data = new ArrayList();
+
+        int country = getCountry();
         
-        int level = 0;
+        int level = -1;
         
-        int option = 0;
+        int option = -1;
         
-        while (option < 1 || option > 4){
-            
-            if(random != 1){
+        while (option < 0 || option > 3) {
+
+            if (random != 1) {
+
+                try {
+
+                    System.out.println("\n¿Contra qué clase de navío quieres luchar? \n1.-Goleta \n2.-Fragata \n3.-Buque \n0.-Atrás \n");
+
+                    option = keyboard.nextInt();
+
+                } catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+            } else {
+
+                option = (int) (Math.random() * 3) + 1;
+
+            }
+
+            while (country == getCountry()) {
+
+                country = (int) (Math.random() * 3);
+
+            }
+
+            if(option == 0){
                 
-                System.out.println("\n¿Contra qué clase de navío quieres luchar? \n1.-Goleta \n2.-Fragata \n3.-Buque \n4.-Atrás \n");
-            
-                option = keyboard.nextInt();
+                option = 1;
+                
+                country = -1;
+                
+                random = 1;
                 
             }
-            else{
-                
-                option = (int)(Math.random() * 3) +1;
-                
-            }
             
+            data.add(0, option - 1);
             
-            
-            int country = getCountry();
-            
-            while(country == getCountry()){
-                
-                country = (int)(Math.random() * 3);
-                
-            }
-            
-            data.add(0 , worker_list.get(0).getNameS()[(int)(Math.random()*20)]);
-            
-            data.add(1 , worker_list.get(0).getSubnameS()[(int)(Math.random()*20)]);
-            
-            data.add(2, country);
-            
-            data.add(3, -1);
-            
-            data.add(4, 0);
-            
-            while((level < 1 || level > 4) && option != 4){
-                
-                if (random != 1){
-                    
-                    System.out.println("\n¿A qué nivel quieres que se encuentre? \n1.-Mínimo \n2.-Medio \n3.-Alto \n4.-Atrás\n");
-                
-                    level = keyboard.nextInt();
-                    
-                    if (level == 4){
-                    
-                    option = 0;
-                    
+            data.add(1, worker_list.get(0).getNameS()[(int) (Math.random() * 20)]);
+
+            data.add(2, worker_list.get(0).getSubnameS()[(int) (Math.random() * 20)]);
+
+            data.add(3, country);
+
+            data.add(4, -1);
+
+            data.add(5, 0);
+
+            while (level < 0 || level > 3) {
+
+                if (random != 1) {
+
+                    try {
+
+                        System.out.println("\n¿A qué nivel quieres que se encuentre? \n1.-Mínimo \n2.-Medio \n3.-Alto \n0.-Atrás\n");
+
+                        level = keyboard.nextInt();
+
+                    } catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+                    if (level == 0) {
+
+                        data.set(3, -1);
+
                     }
-                    
+
                 }
-                else{
-                    
-                    level = (int)(Math.random() * 2) +1;
-                    
+                else {
+
+                    level = (int) (Math.random() * 2) + 1;
+
                 }
 
-            switch(option){
-                
-                case 1:
-                   
-                    SeaShipSchooner CPU_Schooner = new SeaShipSchooner((String)data.get(0), (String)data.get(1), (int)data.get(2), (int)data.get(3), (int)data.get(4));
-                    
-                    CPU_Boat.add(0, CPU_Schooner);
-                    
-                break;
-                
-                case 2:
-                   
-                    SeaShipFrigate CPU_Frigate= new SeaShipFrigate((String)data.get(0), (String)data.get(1), (int)data.get(2), (int)data.get(3), (int)data.get(4));
-                    
-                    CPU_Boat.add(0, CPU_Frigate);
-                    
-                break;
-                
-                case 3:
-                   
-                    SeaShipWar CPU_War= new SeaShipWar((String)data.get(0), (String)data.get(1), (int)data.get(2), (int)data.get(3), (int)data.get(4));
-                    
-                    CPU_Boat.add(0, CPU_War);
-                    
-                break;
-                
-            }
-            
-            int gold = (int)(Math.random() * 101) + 50;
-            
-            int upgrade [] = new int [3];
-            
-            switch(level){
-            
-            case 1:
-                
-                upgrade[0] = 0;
-                
-                upgrade[1] = 0;
-                
-                upgrade[2] = gold;
-                
-            break;
-            
-            case 2:
-                
-                upgrade[0] = 1;
-                
-                upgrade[1] = 50;
-                
-                upgrade[2] = gold * 2;
-                
-            break;
-            
-            case 3:
-                
-                upgrade[0] = 3;
-                
-                upgrade[1] = 100;
-                
-                upgrade[2] = gold * 3;
-                
-            break;
-            
-        }
-            
+                SeaShip CPU = DataManager.generateGameData(data, 1);
+
+                CPU_Boat.add(0, CPU);
+
+                int gold = (int) (Math.random() * 101) + 50;
+
+                int upgrade[] = new int[3];
+
+                switch (level) {
+
+                    case 1:
+
+                        upgrade[0] = 0;
+
+                        upgrade[1] = 0;
+
+                        upgrade[2] = gold;
+
+                        break;
+
+                    case 2:
+
+                        upgrade[0] = 1;
+
+                        upgrade[1] = 50;
+
+                        upgrade[2] = gold * 2;
+
+                        break;
+
+                    case 3:
+
+                        upgrade[0] = 3;
+
+                        upgrade[1] = 100;
+
+                        upgrade[2] = gold * 3;
+
+                        break;
+
+                }
+
                 CPU_Boat.get(0).setAttackP(CPU_Boat.get(0).getAttackUpgrade()[upgrade[0]]);
-                
+
                 CPU_Boat.get(0).setDefenseP(CPU_Boat.get(0).getDefenseUpgrade()[upgrade[0]]);
-                
+
                 CPU_Boat.get(0).setBed(0, CPU_Boat.get(0).getBedsUpgrade()[upgrade[0]]);
-                
+
                 CPU_Boat.get(0).setBed(2, CPU_Boat.get(0).getBedsUpgrade()[upgrade[0]]);
-                
+
                 CPU_Boat.get(0).setArmor(upgrade[1]);
-                
+
                 CPU_Boat.get(0).setGold(upgrade[2]);
-                
+
                 CPU_Boat.get(0).setCannon_ammo(30);
-                
-                 CPU_Boat.get(0).setMusket_ammo(30);
-        
-                CPU_Boat.get(0).createTripulation();
-        
-                System.out.println(CPU_Boat.get(0).toString());
-        
-           } 
-        } 
-        
+
+                CPU_Boat.get(0).setMusket_ammo(30);
+
+                CPU_Boat.get(0).createTripulation(CPU_Boat.get(0).getBeds()[2], 0);
+
+            }
+
+        }
+
         return CPU_Boat.get(0);
     }
     
-    public void createTripulation() {
+    public void createTripulation(int newBeds, int type) {
+        
+        Worker worker;
         
         int range;
         int name;
         int subname;
 
-        Worker worker = new Worker(20, 20, 0);
+        if(type==0){
+            
+            worker = new Worker(20, 20, 0);
         
-        worker.createCaptain(this.name, this.subname);
+            worker.createCaptain(this.name, this.subname);
         
-        worker_list.add(worker);
+            worker_list.add(worker);
+            
+        }
+        
+        if(type==1){
+            
+            gold = gold - newBeds * getPrices()[2];
+        
+            beds[2] = beds[2] + newBeds;
+            
+        }
 
-        for (int i = 1; i < beds[2]; i++) {
+        for (int i = 1; i < newBeds; i++) {
             range = (int) (Math.random() * 2) + 1;
             name = (int) (Math.random() * 20);
             subname = (int) (Math.random() * 20);
             worker = new Worker(name, subname, range);
             worker_list.add(worker);
         }
+        
     }
     
     public void loadTripulation() throws FileNotFoundException, IOException {
         
-        int saveSlot = getSaveSlot();
-        
-        File file = new File("File" + saveSlot + ".bin");
+        File file = new File(String.format("File%d.bin", getSaveSlot()));
 
-        String lines;
-        
         int count = 0;
         
-        Worker worker = new Worker();
+        Worker worker;
         
+        String lines;
+
         try{
             
             FileInputStream fis = new FileInputStream(file);
@@ -520,95 +484,65 @@ public abstract class SeaShip {
             
             while (true) {
 
+                String s_data;
+                
+                String sa_data [];
+                
+                int ia_data [] = new int [3];
+                
                 lines = dis.readUTF();
                 
-                ArrayList w_data = new ArrayList();
-
-                int information = 0;
-
-                String s_data = "";
-
-                for (int i = 0; i < lines.length(); i++) {
-
-                    if (lines.charAt(i) == 58 && lines.charAt(0) == 119) {
-                        information = 1;
+                if(lines.charAt(0) == 119){
+                    
+                    s_data = lines.split(":")[1];
+                    
+                    s_data = s_data.replace("\n", "");
+                    
+                    sa_data = s_data.split(" ");
+                
+                    for (int i = 0; i < sa_data.length; i++) {
+                        
+                        ia_data[i] =Integer.parseInt(sa_data[i]);                       
+                        
                     }
-
-                    if (information == 1 && lines.charAt(i) != 32 && lines.charAt(i) != 58 && lines.charAt(i) != 10) {
-
-                        s_data = s_data + lines.charAt(i);
-
-                    }
-
-                    if (lines.charAt(i) == 32 || i == (lines.length() - 1)) {
-
-                        if (s_data != "") {
-
-                            int i_data = Integer.parseInt(s_data);
-
-                            s_data = "";
-
-                            w_data.add(i_data);
-
-                        }
-
-                    }
-
-                }
-
-                if (lines.charAt(0) == 119) {
-
-                    worker = new Worker((int) w_data.get(0), (int) w_data.get(1), (int) w_data.get(2));
+                    
+                    worker = new Worker(ia_data[0], ia_data[1], ia_data[2]);
 
                     worker_list.add(worker);
                     
                     count++;
-
+                    
                 }
 
             }
             
         }catch(IOException e){}
-        
-        if (count < getBeds()[2]){
-                
-            setBed(2, count);
-            
-            }
-        
-    }
-    
-    public void increaseTripulation(int workerNum){
-        
-        int range;
-        int name;
-        int subname;
 
-        Worker worker;
-        
-        for (int i = 1; i < workerNum; i++) {
-            range = (int) (Math.random() * 2) + 1;
-            name = (int) (Math.random() * 20);
-            subname = (int) (Math.random() * 20);
-            worker = new Worker(name, subname, range);
-            worker_list.add(worker);
+        if (count < getBeds()[2]) {
+
+            setBed(2, count);
+
         }
-        
-        gold = gold - workerNum * getPrices()[2];
-        
-        beds[2] = beds[2] + workerNum;
-        
+
     }
     
     public void deleteTripulation(int deads) {
         
         if (deads >= worker_list.size() -1){
+            
             deads = worker_list.size() -1;
+            
         }
+        
+        int size = deads - 1;
         
         for (int i = 0; i < deads; i++) {
             
-            worker_list.remove(1);
+            int random = (int)Math.random()*size + 1;
+            
+            worker_list.remove(random);
+            
+            size--;
             
         }
         
@@ -638,14 +572,21 @@ public abstract class SeaShip {
         //Critical hit //Soft hit
         
         if (hit[0] >= 0 && hit[0] <= 12 || hit[0] >= 88 && hit[0] <= 100) {
+            
             hit[0]=1.25;
+            
         }
         else{
+            
             if(hit[0] >= 12 && hit[0] <= 24 || hit[0] >= 76 && hit[0] <= 88){
+                
                 hit[0]=0.85;
+                
             }
             else{
+                
                 hit[0]=1;
+                
             }
             
         }
@@ -653,23 +594,25 @@ public abstract class SeaShip {
         //Cannon Explode
         
         if(hit[1] >= 0 && hit[1] <= 15 || hit[1] >= 85 && hit[1] <= 100){
+            
             hit[1]=1;
+            
         }
         else{
+            
             hit[1]=0;
+            
         }
         
         //
-        
-        /*double formule = getAttack() * (((getAttackP()/100) * hit[0]) - (int)((double)(enemy.getDefense())/100) * (double)enemy.getDefenseP()/100 * (1 + (double)enemy.getDefend()[0]/100));*/
-        
-        double formule1 = ((getAttack() * ((getAttackP()/100) * hit[0])) * (1 - ((double)enemy.getDefense()/100) * (double)enemy.getDefenseP()/100 * (1.0 + (double)enemy.getDefend()[0]/100)));
+
+        double formule1 = ((getAttack() * ((getAttackP()/100) * hit[0])) * (1 - ((double)enemy.getDefense()/100) * (double)enemy.getDefenseP()/100 * (1.0 + (double)enemy.getDefend()[0]/100))); /*EnemyCanonDamage*/
                
-        double formule2 = ( hit[1] * ((hit[2]/2 * (getAttackP()/100))) * (1 - (((double)getDefense()/100) * (double)(getDefenseP()/100))));
+        double formule2 = ( hit[1] * ((hit[2]/2 * (getAttackP()/100))) * (1 - (((double)getDefense()/100) * (double)(getDefenseP()/100)))); /*PlayerAccidentDamage*/
         
-        double formule3 = ((double)getBeds()[2] * ((hit[4]/100) * hit[1] * (getDefense()/100)));
+        double formule3 = ((double)getBeds()[2] * ((hit[4]/100) * hit[1] * (getDefense()/100))); /*PlayerWorkersDamage*/
         
-        double formule4 = ((double)enemy.getBeds()[0] * ((hit[5]/100) * hit[0])) * (((double)enemy.getDefense()/100) * ((double)enemy.getDefenseP()/100));
+        double formule4 = ((double)enemy.getBeds()[0] * ((hit[5]/100) * hit[0])) * (((double)enemy.getDefense()/100) * ((double)enemy.getDefenseP()/100)); /*EnemyWorkersDamage*/
         
         System.out.println(formule4);
         
@@ -685,7 +628,7 @@ public abstract class SeaShip {
             
         }
         
-        System.out.print(enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()] + " ha recibido un ataque");
+        System.out.print(String.format("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]));
         
         if(hit [0] == 1.25){
             System.out.print(" critico");
@@ -699,7 +642,7 @@ public abstract class SeaShip {
             System.out.print(" estando protegido");
         }
         
-        System.out.print(" de " + (int) formule1 + " puntos de daño , que ha causado " + (int)formule4 + " bajas \n"); 
+        System.out.print(String.format(" de %d puntos de daño , que ha causado %d bajas \n", (int) formule1, (int)formule4)); 
         
         enemy.setArmor((int)(enemy.getArmor() - (int)formule1));
         
@@ -707,7 +650,8 @@ public abstract class SeaShip {
             
             if((-enemy.getArmor()) != (int)formule1 && enemy.getSaveSlot() != -1){
                 
-                System.out.println("La armadura ha absobrido " + (int)(formule1 + (enemy.getArmor())) + " puntos de daño");
+                
+                System.out.println(String.format("La armadura ha absobrido %d puntos de daño", (int)(formule1 + (enemy.getArmor()))));
                 
             }
             
@@ -720,7 +664,7 @@ public abstract class SeaShip {
             
             if(enemy.getSaveSlot() != -1){
                 
-                System.out.println("La armadura ha aguantado el golpe quedando intactos " + enemy.getArmor() + " puntos de armadura");
+                System.out.println(String.format("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura", enemy.getArmor()));
                 
             }
  
@@ -734,7 +678,9 @@ public abstract class SeaShip {
 
         
         if(hit[1]==1){
-            System.out.println("La polvora se ha incendiado durante el ataque provocando un accidente que ha causado " + (int)formule2 + " puntos de daño y " + deads + " bajas." );
+            
+            System.out.println(String.format("La polvora se ha incendiado durante el ataque provocando un accidente que ha causado %d puntos de daño y %d bajas.", (int)formule2, deads));
+            
         }
         
         deleteTripulation(deads);
@@ -743,11 +689,11 @@ public abstract class SeaShip {
 
         enemy.setBed(2, enemy.getBeds()[2] - deads);
 
-        setTurn();
-
         enemy.deleteTripulation(deads);
         
         setCannon_ammo(getCannon_ammo()-1);
+        
+        setTurn();
 
     }
     
@@ -805,9 +751,9 @@ public abstract class SeaShip {
         
         //
         
-        double formule1 = ( hit[1]/100 * ((getAttack() * ((getAttackP()/100) * hit[0])) * (1 - ((double)enemy.getDefense()/100) * (double)enemy.getDefenseP()/100 * (1.0 + (double)enemy.getDefend()[0]/100))));
+        double formule1 = ( hit[1]/100 * ((getAttack() * ((getAttackP()/100) * hit[0])) * (1 - ((double)enemy.getDefense()/100) * (double)enemy.getDefenseP()/100 * (1.0 + (double)enemy.getDefend()[0]/100)))); /*EnemyMusketDamage*/
                
-        double formule2 = ((double)enemy.getBeds()[0] * ((((double)hit[2]/100) * hit[0]) * ((double)getBeds()[0]/(double)enemy.getBeds()[0])) * (((double)enemy.getDefense()/100) * ((double)enemy.getDefenseP()/100)));
+        double formule2 = ((double)enemy.getBeds()[0] * ((((double)hit[2]/100) * hit[0]) * ((double)getBeds()[0]/(double)enemy.getBeds()[0])) * (((double)enemy.getDefense()/100) * ((double)enemy.getDefenseP()/100))); /*EnemyWorkersDamage*/
         
         if (formule2 > enemy.getBeds()[2]){
             
@@ -815,7 +761,7 @@ public abstract class SeaShip {
             
         }
         
-        System.out.print(enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()] + " ha recibido un ataque");
+        System.out.print(String.format("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]));
         
         if(hit [0] == 1.25){
             System.out.print(" critico");
@@ -829,7 +775,7 @@ public abstract class SeaShip {
             System.out.print(" estando protegido");
         }
         
-        System.out.print(" de " + (int) formule1 + " puntos de daño, que ha causado " + (int)formule2 + " bajas \n"); 
+        System.out.print(String.format(" de %d puntos de daño, que ha causado %d bajas \n", (int) formule1, (int)formule2));
         
         enemy.setArmor((int)(enemy.getArmor() - (int)formule1));
         
@@ -837,7 +783,7 @@ public abstract class SeaShip {
             
             if((-enemy.getArmor()) != (int)formule1 && enemy.getSaveSlot() != -1){
                 
-                System.out.println("La armadura ha absobrido " + (int)(formule1 + (enemy.getArmor())) + " puntos de daño");
+                System.out.print(String.format("La armadura ha absobrido %d puntos de daño", (int)(formule1 + (enemy.getArmor()))));
                 
             }
             
@@ -850,7 +796,7 @@ public abstract class SeaShip {
             
             if(enemy.getSaveSlot() != -1){
                 
-                System.out.println("La armadura ha aguantado el golpe quedando intactos " + enemy.getArmor() + " puntos de armadura");
+                System.out.print(String.format("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura", enemy.getArmor()));
                 
             }
  
@@ -862,9 +808,9 @@ public abstract class SeaShip {
 
         enemy.deleteTripulation(deads);
         
-        setTurn();
-        
         setMusket_ammo(getMusket_ammo()-1);
+        
+        setTurn();
         
     }
     
@@ -923,6 +869,12 @@ public abstract class SeaShip {
     public void buyCannonAmmo() {
         
         setCannon_ammo(getCannon_ammo() + getLot()[0]);
+        
+        if (getCannon_ammo() > getMaxAmmo()[0]){
+            
+            setCannon_ammo(getMaxAmmo()[0]);
+            
+        }
                 
         setGold(getGold() - getPrices()[0]);
         
@@ -930,6 +882,12 @@ public abstract class SeaShip {
     public void buyMusketAmmo() {
         
         setMusket_ammo(getMusket_ammo() + getLot()[1]);    
+        
+        if (getMusket_ammo() > getMaxAmmo()[1]){
+            
+            setMusket_ammo(getMaxAmmo()[1]);
+            
+        }
                 
         setGold(getGold() - getPrices()[1]);
                     
@@ -949,11 +907,11 @@ public abstract class SeaShip {
             
             worker [2]  = this.worker_list.get(i).getRangeS()[this.worker_list.get(i).getRange()];
             
-            worker_list = worker_list + "\nNombre: " + worker [0] + " - Apellidos: " + worker[1] + " - Rango: " + worker[2];
+            worker_list = String.format("\nNombre: %s - Apellidos: %s - Rango: %s", worker [0], worker [1], worker [2]);
             
             if(developer == 1){
                 
-                 worker_list = worker_list + " - Position: " + i;
+                worker_list = String.format("%s - Position: %d",worker_list , i );
                  
             }
         }
@@ -963,7 +921,11 @@ public abstract class SeaShip {
     
     public String toString(){
         
+        String countryS [] = {"España", "Francia", "Gran Bretaña"};
+        
         String boat = getClass().getSimpleName();
+        
+        setTurn();
         
         if(boat.charAt(7) == 83){
             
@@ -989,24 +951,25 @@ public abstract class SeaShip {
             
         }
         
+        StringBuilder data = new StringBuilder("\n====================================================");
+        data.append("\n| Capitan: ").append(this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()]).append(" ").append(this.worker_list.get(0).getSubnameS()[this.worker_list.get(0).getSubname()]).append(" | Nacionalidad: " + countryS[country]);
+        data.append("\n----------------------------------------------------");
+        data.append("\n| Tipo de navío: ").append(boat).append(" | Salud: ").append(getHealth()).append(" | Blindaje: ").append(getArmor()).append(" ");
+        data.append("\n----------------------------------------------------");
+        data.append("\n| Oro: ").append(getGold()).append(" | Munición: ").append(getCannon_ammo()).append(" - Cañón | ").append(getMusket_ammo()).append(" - Mosquete");
+        data.append("\n|                     ------------------------------");
+        data.append("\n| Tripulación: ").append(getBeds()[2]).append("/").append(getBeds()[0]).append(" | Atk: ").append((int)getAttackP()).append(" | Def: ").append((int)getDefenseP()).append(" | Spd: ").append((int)getTurn());
+        data.append("\n====================================================");
         
-        
-        String data = "\n===================================================="
-                    + "\n| Capitan: " +  this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()] + " " + this.worker_list.get(0).getSubnameS()[this.worker_list.get(0).getSubname()] + " | Nacionalidad: " + countryS[country] 
-                    + "\n----------------------------------------------------"
-                    + "\n| Tipo de navío: " + boat + " | Salud: " + getHealth() + " | Blindaje: " + getArmor() + " "
-                    + "\n----------------------------------------------------"
-                    + "\n| Oro: " + getGold() + " | Munición: " + getCannon_ammo() + " - Cañón | " + getMusket_ammo() + " - Mosquete"
-                    + "\n|                     ------------------------------"
-                    + "\n| Tripulación: " + getBeds()[2] + "/" + getBeds()[0] + " | Atk: " + (int)getAttackP() + " | Def: " + (int)getDefenseP() + " | Spd: " + (int)((double)getSpeed() * (1 - ((double)getSpeedP()/100) * ((double)getBeds()[2]/(double)getBeds()[1])))
-                    + "\n====================================================";
-        
-        return data;
-    }
-    
-    public String toStringDeveloper(){
-        
-        return  "Save slot: "+ "File"+ this.saveSlot + ".txt\n" + "Captain: " + this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()] + " - Type of ship: " + getClass().getSimpleName() + " - Seaship name: " + name + " - Country:" + countryS[country] + " - Health:" + health + " - Armor:" + armor + " - Cannon ammo:" + cannon_ammo + " - Musket ammo:" + musket_ammo + " - Gold:" + gold + " - Attack percentage:" + attackP + " - Defense percentage:" + defenseP + " - Speed percentage:" + speedP + " - Available beds:" + beds[0] + " - Ocuppied beds:" + beds[2] + " - Max beds:" + beds[1] + "Turn: " + (getSpeed() * (1 - (double)getSpeedP()/100 * getBeds()[2]/getBeds()[1])) + '}';
+        return data.toString();
     }
 
+    public abstract void fixBoat(int i);
+    
+    public abstract void upgradeAttack(int i);
+
+    public abstract void upgradeBeds(int i);
+    
+    public abstract void upgradeDefense(int i);
+    
 }

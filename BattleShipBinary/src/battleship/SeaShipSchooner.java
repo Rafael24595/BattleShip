@@ -1,14 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package battleship;
 
-/**
- *
- * @author Rafael Ruiz
- */
 public class SeaShipSchooner extends SeaShip{
     
     int maxHealth=350;
@@ -33,6 +25,7 @@ public class SeaShipSchooner extends SeaShip{
         super.setBed(1, bedsUpgrade[3]);
         super.setBed(2, bedsUpgrade[0]);
         super.setBed(3, 0);
+        
     }
     
     public SeaShipSchooner(String name, String subname, int country, int health, int armor, int cannon_ammo, int musket_ammo, int gold, double attackP, double defenseP, int[] beds, int saveSlot, int newGame) {

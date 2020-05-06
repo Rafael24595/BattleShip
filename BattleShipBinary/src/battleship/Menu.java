@@ -1,76 +1,77 @@
 
 package battleship;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
     
     public static SeaShip opening() throws IOException{
         
+        Scanner keyboard = new Scanner(System.in);
+        
+        SeaShip myBoat = new SeaShipFrigate();
+        
+        ArrayList loadInf = new ArrayList();
+        
+        ArrayList saveData = new ArrayList();
+        
         int loadType =0;
         
         int increase = 1;
         
-        File file;
-        
         while(loadType !=1 && loadType != 2){
- 
-        System.out.println("\n¿Qué desea hacer? \n1.-Crear partida nueva \n2.-Cargar partida\n");
-        
-        Scanner keyboard = new Scanner(System.in);
-        
-        loadType = keyboard.nextInt();
-        
-        int option = 0;
-        
-        String ranure = "x";
-        
-        switch (loadType){
-        
-            case 1: 
-                
-                ArrayList loadInf1 = DataManager.newSaveData(loadType);
-                
-                file = (File)loadInf1.get(0);
-                
-                increase = (int)loadInf1.get(1);
-                
-                loadType = (int)loadInf1.get(2);
-                
-            break;
-                
-            case 2:
             
-                ArrayList loadInf2 = DataManager.loadData(loadType);
+            try{
                 
-                file = (File)loadInf2.get(0);
+                System.out.println("\n¿Qué desea hacer? \n1.-Crear partida nueva \n2.-Cargar partida \n3.-Borrar partida \n");
+
+                loadType = keyboard.nextInt();
                 
-                increase = (int)loadInf2.get(1);
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+ 
+        
+        switch(loadType){
+            
+            case 1:
                 
-                loadType = (int)loadInf2.get(2);
-              
+                loadInf = DataManager.newSaveData(loadType);
+                
             break;
-        
-    }
+            
+            case 2:
+                
+                loadInf = DataManager.loadData(loadType);
+                
+                loadType = (int)loadInf.get(1);
+                
+            break;
+            
+            case 3:
+                
+                DataManager.deleteSaveFile();
+                
+            break;
+            
         }
-        ArrayList<SeaShip> myBoat = new ArrayList<SeaShip>();
         
-        ArrayList saveData = DataManager.readFile("File" + increase + ".bin"); 
+        }
+                
+        increase = (int)loadInf.get(0);
+                
+        loadType = (int)loadInf.get(1);  
         
-        myBoat.add(0, DataManager.generateGameData(saveData, loadType));
+        saveData = DataManager.readFile(String.format("File%d.bin", increase)); 
         
-        return myBoat.get(0);
+        myBoat = DataManager.generateGameData(saveData, loadType);
+        
+        return myBoat;
     }
 
-    public static SeaShip menu(SeaShip player) throws IOException{
+    public static void menu(SeaShip player) throws IOException{
         
         ArrayList<SeaShip> myBoat = new ArrayList<SeaShip>();
         
@@ -82,10 +83,14 @@ public class Menu {
         
         while(option != 0) {
             
-            System.out.println("\n¿Qué deseas hacer? \n1.-Nueva partida \n2.-Combatir con enemigo customizado \n3.-Generar enemigo aleatoriamente \n4.-Modo historia(Cooming_Soon) \n5.-Puerto \n6.-Mostrar datos \n7.-Guardar progreso \n0.-Salir\n");
+            try{
+                
+                System.out.println("\n¿Qué deseas hacer? \n1.-Nueva partida \n2.-Combatir con enemigo customizado \n3.-Generar enemigo aleatoriamente \n4.-Modo historia(Cooming_Soon) \n5.-Puerto \n6.-Mostrar datos \n7.-Guardar progreso \n0.-Salir\n");
         
-            option = keyboard.nextInt();
-        
+                option = keyboard.nextInt();
+                
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
             switch(option){
                 
                 case 1:
@@ -131,8 +136,8 @@ public class Menu {
                     
                     System.out.println(myBoat.get(0).toString());
                     
-                    System.out.println("\n| Marineros: "
-                                     + "\n-----------------");
+                    System.out.println(new StringBuilder("\n| Marineros: ")
+                                                 .append("\n-----------------"));
                     
                     System.out.println(myBoat.get(0).toStringWorker_list(0));  
                     
@@ -145,22 +150,18 @@ public class Menu {
                     System.out.println("\nDatos guardados");
                     
                 break;
-                
+
+            }
+
         }
-        
-        
-            
-        }
-        
-        return myBoat.get(0);
-        
+
     }
     
     public static void battleMenu(SeaShip player, SeaShip CPU) throws IOException{
         
         Scanner keyboard = new Scanner(System.in);
         
-        System.out.println("\nEnemigo " + CPU.getName() + " está preparado para combatir");
+        System.out.println(String.format("\nEnemigo %s está preparado para combatir", CPU.getName()));
         
         int first = player.getSpeedP() - CPU.getSpeedP();
         
@@ -181,6 +182,8 @@ public class Menu {
         
         while (player.getHealth() > 0 && player.getBeds()[2] > 0 && CPU.getHealth() > 0 && CPU.getBeds()[2] > 0){
 
+            System.out.println(player.getTurn() + "  " + CPU.getTurn());
+            
             int optionPlayer = 0;
             
             int optionCPU = 0;
@@ -188,110 +191,23 @@ public class Menu {
             if (player.getTurn() <= 0) {
 
                 while (optionPlayer < 1 || optionPlayer > 5) {
+                    
+                    try{
+                
+                        System.out.println("\n¿Qué quieres hacer? \n1.-Ataque de cañon \n2.-Ataque de mosquete \n3.-Defenderse \n4.-Mostrar datos \n5.-Huir\n");
 
-                    System.out.println("\n¿Qué quieres hacer? \n1.-Ataque de cañon \n2.-Ataque de mosquete \n3.-Defenderse \n4.-Mostrar datos \n5.-Huir\n");
-
-                    optionPlayer = keyboard.nextInt();
+                        optionPlayer = keyboard.nextInt();
+                
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
 
                 }
 
-                switch (optionPlayer) {
-
-                    case 1:
-                        
-                        if (player.getCannon_ammo() > 0){
-                            
-                            System.out.println("\nAtacas con una andanada al enemigo");
-
-                            player.cannonAttack(CPU);
-                            
-                        }
-                        else{
-                            
-                            System.out.println("No te queda munición de cañón");
-                            
-                            player.setTurn(player.getTurn() + 1);
-                            
-                            CPU.setTurn(CPU.getTurn() + 1);
-                            
-                        }
-                        
-
-                    break;
-                    
-                    case 2: 
-                        
-                        if (player.getMusket_ammo() > 0){
-                            
-                            System.out.println("\nRealizas una ataque de fusileros");
-                        
-                            player.musketAttack(CPU);
-                            
-                        }
-                        else{
-                            
-                            System.out.println("No te queda munición de mosquete");
-                            
-                            player.setTurn(player.getTurn() + 1);
-                            
-                            CPU.setTurn(CPU.getTurn() + 1);
-                            
-                        }
-                        
-                        
-                    break;   
-                    
-                    case 3:
-                        
-                        System.out.println("\nTe has defendido");
-
-                        player.setDefend(3);
-                        
-                        player.setTurn();
-
-                    break;
-                    
-                    case 4:
-                        
-                        int show = 0;
-                        
-                        System.out.println(player.toString());
-                        
-                        while (show != 1 && show != 2){
-                            
-                            System.out.println(" 1.-Mostrar marineros                      2.-Salir\n");
-                         
-                            show = keyboard.nextInt();
-                            
-                        }
-                         
-                        if (show == 1)
-                                
-                            System.out.println("\n| Marineros: "
-                                 + "\n-----------------");
-                    
-                            System.out.println(player.toStringWorker_list(0));  
-                            
-                        player.setTurn(player.getTurn() + 1);
-                            
-                        CPU.setTurn(CPU.getTurn() + 1);
-                        
-                    break;
-                    
-                    case 5:
-                        
-                        System.out.println("\nIntentas huir");
-                        
-                        player.runAway(CPU);
-                        
-                    break;
-
-                }
+                Menu.movement(player, CPU, optionPlayer, 0);
 
                 if (optionPlayer == 1 || optionPlayer ==2){
                     
-                    System.out.println("\n" + player.getName() + ": " + player.getHealth() + "PV --- Tripulación: " + player.getBeds()[2] + "/" + player.getBeds()[0] + "\n" + CPU.getName() + ": " + CPU.getHealth() + "PV --- Tripulación: " + CPU.getBeds()[2] + "/" + CPU.getBeds()[0] + "\n");
-                    
+                    System.out.println(String.format("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]));
+   
                 }
                 
             }
@@ -300,54 +216,24 @@ public class Menu {
                 
                 optionCPU = (int)(Math.random() *3) + 1;
                 
-                switch (optionCPU) {
-
-                    case 1:
-                        
-                        System.out.println(CPU.getName() + " te ha atacado una andanada");
-
-                        CPU.cannonAttack(player);
-
-                    break;
-                    
-                    case 2: 
-                        
-                        System.out.println(CPU.getName() + " ha realizado un ataque de fusileros");
-                        
-                        CPU.musketAttack(player);
-                        
-                    break;   
-
-                    case 3:
-                        
-                        System.out.println("\n" + CPU.getName() + "Se ha defendido");
-
-                        CPU.setDefend(CPU.getDefensePlus()[1]);
-
-                    break;
-                }
+                Menu.movement(CPU, player, optionCPU, 1);
                 
                 if (optionCPU == 1 || optionCPU ==2){
                     
-                    System.out.println("\n" + player.getName() + ": " + player.getHealth() + "PV --- Tripulación: " + player.getBeds()[2] + "/" + player.getBeds()[0] + "\n" + CPU.getName() + ": " + CPU.getHealth() + "PV --- Tripulación: " + CPU.getBeds()[2] + "/" + CPU.getBeds()[0] + "\n");
-                    
+                    System.out.println(String.format("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]));
                 }
                 
             }
             
             if(player.getDefend()[1] > 0){
-                               
-                int count = player.getDefend()[1] - 1;
                 
-                player.setDefend(count);
+                player.setDefend(player.getDefend()[1] - 1);
                 
             }
             
             if(CPU.getDefend()[1] > 0){
-                               
-                int count = CPU.getDefend()[1] - 1;
                 
-                CPU.setDefend(count);
+                CPU.setDefend(CPU.getDefend()[1] - 1);
                 
             }
 
@@ -375,18 +261,113 @@ public class Menu {
             player = Menu.opening();
             
         }
-        else{
+        else if (CPU.getHealth() <= 0 || CPU.getBeds()[2] <= 0 && CPU.getBeds()[2] > -999){
             
-            if (CPU.getHealth() <= 0 || CPU.getBeds()[2] <= 0 && CPU.getBeds()[2] > -999){
- 
-                System.out.println("\nEnemigo " + CPU.getName() + " ha caido\nSaqueas " + CPU.getGold() + " doblones de oro de los restos");
+            System.out.println(String.format("\nEnemigo %s ha caido\nSaqueas %d doblones de oro de los restos", CPU.getName(), + CPU.getGold()));
                 
-                player.setGold(player.getGold() + CPU.getGold());
-                
-            }
-            
+            player.setGold(player.getGold() + CPU.getGold());
+
         }
 
+    }
+    
+    public static void movement(SeaShip player, SeaShip CPU, int option, int type){
+        
+        Scanner keyboard = new Scanner(System.in);
+        
+        String playerType [] = {"Atacas con una andanada al enemigo",String.format("%s te ha atacado una andanada", player.getName()), "Realizas una ataque de fusileros", String.format("%s ha realizado un ataque de fusileros", player.getName()), "Te has defendido", String.format("%s se ha defendido", CPU.getName())};
+        
+        switch (option) {
+
+                    case 1:
+                        
+                        if (player.getCannon_ammo() > 0 || type == 1){
+                            
+                            System.out.println("\n" + playerType[0 + type]);
+
+                            player.cannonAttack(CPU);
+                            
+                        }
+                        else{
+                            
+                            System.out.println("\nNo te queda munición de cañón");
+                            
+                            player.setTurn(player.getTurn() + 1);
+                            
+                            CPU.setTurn(CPU.getTurn() + 1);
+                            
+                        }
+
+                    break;
+                    
+                    case 2: 
+                        
+                        if (player.getMusket_ammo() > 0 || type == 1){
+                            
+                            System.out.println("\n" + playerType[2 + type]);
+                        
+                            player.musketAttack(CPU);
+                            
+                        }
+                        else{
+                            
+                            System.out.println("No te queda munición de mosquete");
+                            
+                            player.setTurn(player.getTurn() + 1);
+                            
+                            CPU.setTurn(CPU.getTurn() + 1);
+                            
+                        }
+       
+                    break;   
+                    
+                    case 3:
+                        
+                        System.out.println("\n" + playerType[4 + type]);
+                        
+                        player.setDefend(player.getDefensePlus()[1]);
+                        
+                        player.setTurn();
+
+                    break;
+                    
+                    case 4:
+                        
+                        int show = 0;
+                        
+                        System.out.println(player.toString());
+                        
+                        while (show != 1 && show != 2){
+                            
+                            System.out.println(" 1.-Mostrar marineros                      2.-Salir\n");
+                         
+                            show = keyboard.nextInt();
+                            
+                        }
+                         
+                        if (show == 1)
+                            
+                            System.out.println(new StringBuilder("\n| Marineros: ")
+                                                         .append("\n-----------------"));
+                    
+                            System.out.println(player.toStringWorker_list(0));  
+                            
+                        player.setTurn(player.getTurn() + 1);
+                            
+                        CPU.setTurn(CPU.getTurn() + 1);
+                        
+                    break;
+                    
+                    case 5:
+                        
+                        System.out.println("\nIntentas huir");
+                        
+                        player.runAway(CPU);
+                        
+                    break;
+
+                }
+        
     }
     
     public static void shopMenu(SeaShip player){
@@ -395,20 +376,29 @@ public class Menu {
         
         int option = 1;
         
-        String attackUpdates [] = {"o", "o" ,"o", "o"};
-        
         String playerClass = player.getClass().getSimpleName();
         
-        while(option != 0){
+        while(option != 0){ 
         
-        System.out.println("\n------------------------"
-                         + "\n|  Almacén del puerto  |                            Oro: " +  player.getGold()
-                         + "\n------------------------                           -------------- \n");
-       
-        System.out.println(" ¿Qué desea hacer?\n"
-                        + "\n1.-Reparar navío: 1PV x " + player.getPrices()[3] + " doblones" + " \n2.-Comprar blindaje: " + player.getLot()[2] + " PD x " + player.getPrices()[4] + " \n3.-Comprar munición de cañón: " + player.getLot()[0] + " balas x " + player.getPrices()[0] + " doblones \n4.-Comprar munición de mosquete: " + player.getLot()[1] + " cargas x "+ player.getPrices()[1] +" doblones \n5.-Contratar marineros: 1 x " + player.getPrices()[2] + " doblones" + " \n6.-Comprar mejoras para el navío \n0.-Salir\n");
+        System.out.println(new StringBuilder("\n------------------------")
+                                     .append("\n|  Almacén del puerto  |                            Oro: ").append(player.getGold())
+                                     .append("\n------------------------                           -------------- \n"));
+
+        try{
+            
+            System.out.println(new StringBuilder(" ¿Qué desea hacer?\n")
+                                                .append("\n1.-Reparar navío: 1PV x ").append(player.getPrices()[3])
+                                                .append(" doblones")
+                                                .append(" \n2.-Comprar blindaje: ").append(player.getLot()[2]).append(" PD x ").append(player.getPrices()[4])
+                                                .append(" \n3.-Comprar munición de cañón: ").append(player.getLot()[0]).append(" balas x ").append(player.getPrices()[0]).append(" doblones")
+                                                .append(" \n4.-Comprar munición de mosquete: ").append(player.getLot()[1]).append(" cargas x ").append(player.getPrices()[1]).append(" doblones")
+                                                .append(" \n5.-Contratar marineros: 1 x ").append(player.getPrices()[2]).append(" doblones")
+                                                .append(" \n6.-Comprar mejoras para el navío"
+                                                      + " \n0.-Salir\n"));
 
             option = keyboard.nextInt();
+                
+        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
 
         switch(option){
             
@@ -418,7 +408,9 @@ public class Menu {
                 
                 int fixIt = 0;
                 
-                System.out.print("\nSe regenerarán ");
+                if(player.getHealth() < player.getMaxHealth() ){
+                    
+                    System.out.print("\nSe regenerarán ");
                 
                 if((player.getMaxHealth() - player.getHealth()) * player.getPrices()[3] <= player.getGold()){
                     
@@ -435,112 +427,73 @@ public class Menu {
                     
                 }
                 
-                System.out.print(" puntos de salud por " + fix * player.getPrices()[3] + " doblones.\n");
+                System.out.print(String.format(" puntos de salud por %d doblones.\n", fix * player.getPrices()[3]));
                 
                 while(fixIt != 1 && fixIt != 2){
                     
-                    System.out.println("\n¿Está de acuedo? \n1.-Sí \n2.-No\n");
+                    try{
+                
+                         System.out.println("\n¿Está de acuedo? \n1.-Sí \n2.-No\n");
                     
-                    fixIt = keyboard.nextInt();
-                    
+                        fixIt = keyboard.nextInt();
+                
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+  
                 }
                 
                 if (fixIt == 2){
                     
-                    fixIt = fix + 1;
+                    do{
+                        
+                        try{
+                
+                            System.out.println("\n¿Cuantos puntos de salud desea recuperar?\n");
+                        
+                            fixIt = keyboard.nextInt();
+                
+                        }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                        
+                        if(fixIt > fix){
+                            
+                            System.out.println("\nNo va a ser posible");
+                            
+                        }
+ 
+                    }while ((fixIt > fix || fixIt < 0) && fixIt != 0);
                     
-                    while (fixIt > fix && fixIt != 0){
-                        
-                        System.out.println("\n¿Cuantos puntos de salud desea recuperar?\n");
-                        
-                        fixIt = keyboard.nextInt();
-                        
-                    }
+                }
+                else{
                     
-                    fix = fixIt;
+                    fixIt = fix;
                     
                 }
                 
-                player.fixBoat(fix);
-                
+                player.fixBoat(fixIt);
+                    
+                }
+                else{
+                    
+                    System.out.println("\nTu salud está al máximo");
+                    
+                }
+  
             break;    
             
             case 2:
                 
-              if (player.getPrices()[4] <= player.getGold()){
-                  
-                  
-                  
-                  if(!(player.getArmor() + player.getLot()[2] >= player.getLot()[2] + player.getMaxArmor())){
-                      
-                    player.buyArmor();
-                  
-                    System.out.println("\nLa armadura ha aumentado a " + player.getArmor());
-                      
-                  }
-                  else{
-                      
-                      System.out.println("\nArmadura máxima");
-                      
-                  }
-              }
-              else{
-                  
-                System.out.println("\nNo tienes suficiente oro"); 
-                  
-              }
+              Menu.buyMenu(player, 0);
                 
             break;
             
             case 3:
                 
-                if(player.getGold() >= player.getPrices()[0]){
-                    
-                    if(!(player.getCannon_ammo() + player.getLot()[0] >= player.getLot()[0] + player.getMaxAmmo()[0])){
-                        
-                        player.buyCannonAmmo();
-                    
-                        System.out.println("\nHas comprado balas de cañon, munición actual: " + player.getCannon_ammo());
-                        
-                    }
-                    else{
-                        
-                        System.out.println("\nMunición de cañón máxima");
-                        
-                    }
-                    
-                }
-                else{
-                    
-                    System.out.println("\nNo tienes suficiente oro");
-                    
-                }
+               Menu.buyMenu(player, 1);
     
             break;
             
             case 4:
                 
-                if(player.getGold() >= player.getPrices()[1]){
-                    
-                    if(!(player.getMusket_ammo() + player.getLot()[1] >= player.getLot()[1] + player.getMaxAmmo()[1])){
-                        
-                        player.buyMusketAmmo();
-                    
-                        System.out.println("\nHas comprado cargas de mosquete, munición actual: " + player.getMusket_ammo());
-                        
-                    }
-                    else{
-                        
-                        System.out.println("\nMunición de mosquete máxima");
-                        
-                    }
-                    
-                }
-                else{
-                    
-                    System.out.println("\nNo tienes suficiente oro");
-                    
-                }
+               Menu.buyMenu(player, 2);
     
             break;
             
@@ -550,9 +503,13 @@ public class Menu {
                 
                 while((workerNum < 0 || workerNum + player.getBeds()[2] > player.getBeds()[0] || workerNum * player.getPrices()[2] > player.getGold()) && workerNum != 0){
                     
-                    System.out.println("\n¿Cuantos marineros desea contratar?                               Tripulación actual: " + player.getBeds()[2] + "/" + player.getBeds()[0] + "\n");
+                    try{
                 
-                    workerNum = keyboard.nextInt();
+                        System.out.println(String.format("\n¿Cuantos marineros desea contratar?                               Tripulación actual: %d/%d\n", player.getBeds()[2], player.getBeds()[0]));
+
+                        workerNum = keyboard.nextInt();
+                
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
                     
                     if (workerNum + player.getBeds()[2]  > player.getBeds()[0]){
                         
@@ -563,7 +520,7 @@ public class Menu {
                         
                         if (workerNum < 0){
                         
-                        System.out.println("\nNosotros no necesitamos más marineros");
+                        System.out.println("\nNosotros no contratamos marineros");
                         
                         }
                         else{
@@ -580,7 +537,7 @@ public class Menu {
                     
                 }
                 
-                player.increaseTripulation(workerNum);
+                player.createTripulation(workerNum, 1);
                 
             break;
             
@@ -616,126 +573,44 @@ public class Menu {
                     
                 }
                 
+                System.out.println(new StringBuilder("\n---------------")
+                                             .append("\n|   Mejoras   |")
+                                             .append("\n---------------\n"));
                 
+                System.out.println(
+                new StringBuilder("----------------------------------------------------------------------------------")
+                        .append("\n| 1.- Mejora de armamento| ").append(attackUpdate[1]).append(" +").append(player.getAttackUpgrade()[1]).append(" Atk x ").append(player.getAttackUpgrade()[5]).append(" | ").append(attackUpdate[2]).append(" +").append(player.getAttackUpgrade()[2]).append(" Atk x ").append(player.getAttackUpgrade()[6]).append(" | ").append(attackUpdate[3]).append(" +").append(player.getAttackUpgrade()[3]).append(" Atk x ").append(player.getAttackUpgrade()[7]).append(" | ")
+                        .append("\n----------------------------------------------------------------------------------")
+                        .append("\n| 2.- Mejora de defensa  | ").append(defenseUpdate[1]).append(" +").append(player.getDefenseUpgrade()[1]).append(" Atk x ").append(player.getDefenseUpgrade()[5]).append(" | ").append(defenseUpdate[2]).append(" +").append(player.getDefenseUpgrade()[2]).append(" Atk x ").append(player.getDefenseUpgrade()[6]).append(" | ").append(defenseUpdate[3]).append(" +").append(player.getDefenseUpgrade()[3]).append(" Atk x ").append(player.getDefenseUpgrade()[7]).append("  | ")
+                        .append("\n----------------------------------------------------------------------------------")
+                        .append("\n| 3.- Mejora de catres   | ").append(bedUpdate[1]).append(" +").append(player.getBedsUpgrade()[1]).append(" Atk x ").append(player.getBedsUpgrade()[5]).append(" | ").append(bedUpdate[2]).append(" +").append(playerClass).append(player.getBedsUpgrade()[2]).append(playerClass).append(" Atk x ").append(player.getBedsUpgrade()[6]).append(" | ").append(bedUpdate[3]).append(" +").append(player.getBedsUpgrade()[3]).append(" Atk x ").append(player.getBedsUpgrade()[7]).append("  | ")
+                        .append("\n----------------------------------------------------------------------------------")
+                        .append("\n| 0.-Salir  |")
+                        .append("\n-------------\n"));
                 
-                System.out.println("\n---------------"
-                                 + "\n|   Mejoras   |"
-                                 + "\n---------------\n");
+                try{
                 
-                System.out.println("----------------------------------------------------------------------------------"
-                               + "\n| 1.- Mejora de armamento| " + attackUpdate[1] + " +" + player.getAttackUpgrade()[1] + " Atk x " + player.getAttackUpgrade()[5] + " | " + attackUpdate[2] + " +" + player.getAttackUpgrade()[2] + " Atk x " + player.getAttackUpgrade()[6] + " | " + attackUpdate[3] + " +" + player.getAttackUpgrade()[3] + " Atk x " + player.getAttackUpgrade()[7] + " | "
-                               + "\n----------------------------------------------------------------------------------"
-                               + "\n| 2.- Mejora de defensa  | " + defenseUpdate[1] + " +" + player.getDefenseUpgrade()[1] + " Atk x " + player.getDefenseUpgrade()[5] + " | " + defenseUpdate[2] + " +" + player.getDefenseUpgrade()[2] + " Atk x " + player.getDefenseUpgrade()[6] + " | " + defenseUpdate[3] + " +" + player.getDefenseUpgrade()[3] + " Atk x " + player.getDefenseUpgrade()[7] + "  | "
-                               + "\n----------------------------------------------------------------------------------"
-                               + "\n| 3.- Mejora de catres   | " + bedUpdate[1] + " +" + player.getBedsUpgrade()[1] + " Atk x " + player.getBedsUpgrade()[5] + " | " + bedUpdate[2] + " +" + player.getBedsUpgrade()[2] + " Atk x " + player.getBedsUpgrade()[6] + " | " + bedUpdate[3] + " +" + player.getBedsUpgrade()[3] + " Atk x " + player.getBedsUpgrade()[7] + "  | "
-                               + "\n----------------------------------------------------------------------------------"
-                               + "\n| 0.-Salir  |"
-                               + "\n-------------\n");
+                    upgrade = keyboard.nextInt();
                 
-                upgrade = keyboard.nextInt();
-                
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
                 
                 switch (upgrade){
                     
                     case 1:
                         
-                        int i = 1;
-                        
-                        while ( i < attackUpdate.length && !attackUpdate[i].equals("o")){
-                            
-                            i++;
-                            
-                        }
-                        
-                        if(i < attackUpdate.length ){
-                            
-                        if(player.getAttackUpgrade()[i+4] <= player.getGold()){
-                            
-                            System.out.println("\nLa adquisición de esta mejora aumenta el daño a " + player.getAttackUpgrade()[i] + " Atk");
-                            
-                            player.upgradeAttack(i);
-                            
-                        }
-                        else{
-                            
-                            System.out.println("\nNo tienes suficiente oro");
-                            
-                        }
-                        
-                        }
-                        else{
-                            
-                            System.out.println("\nNo hay mejoras disponibles");
-                            
-                        }
+                        Menu.upgradeMenu(player, attackUpdate, 0);
                         
                     break;
                     
                     case 2:
                         
-                        int j = 1;
-                        
-                        while (j < defenseUpdate.length && !defenseUpdate[j].equals("o")){
-                            
-                            j++;
-                            
-                        }
-                        
-                        if(j < defenseUpdate.length ){                            
-                        
-                        if(player.getDefenseUpgrade()[j+4] <= player.getGold()){
-                            
-                            System.out.println("\nLa adquisición de esta mejora aumenta la defensa a " + player.getDefenseUpgrade()[j] + " Def");
-                            
-                            player.upgradeDefense(j);
-                            
-                        }
-                        else{
-                            
-                            System.out.println("\nNo tienes suficiente oro");
-                            
-                        }
-                        
-                        }
-                        else{
-                            
-                            System.out.println("\nNo hay mejoras disponibles");
-                            
-                        }
+                        Menu.upgradeMenu(player, defenseUpdate, 1);
                         
                     break;
                     
                     case 3:
                         
-                        int k = 1;
-                        
-                        while (k < bedUpdate.length && !bedUpdate[k].equals("o")){
-                            
-                            k++;
-                            
-                        }
-                        
-                        if(k < bedUpdate.length ){ 
-                        
-                        if(player.getBedsUpgrade()[k+4] <= player.getGold()){
-                            
-                            System.out.println("\nLa adquisición de esta mejora aumenta la capacidad a " + player.getBedsUpgrade()[k] + " catres");
-                            
-                            player.upgradeBeds(k);
-                            
-                        }
-                        else{
-                            
-                            System.out.println("\nNo tienes suficiente oro \n");
-                            
-                        }
-                        
-                        }
-                        else{
-                            
-                            System.out.println("\nNo hay mejoras disponibles");
-                            
-                        }
+                        Menu.upgradeMenu(player, bedUpdate, 2);
                         
                     break;
                     
@@ -744,11 +619,110 @@ public class Menu {
                 }
                 
             break;
-            
+
+            }
+
         }
+
+    }
     
+    public static void buyMenu (SeaShip player, int type) {
+        
+        boolean typeB [] = {player.getGold() >= player.getPrices()[4], player.getGold() >= player.getPrices()[0], player.getGold() >= player.getPrices()[1], player.getArmor() < player.getMaxArmor(), player.getCannon_ammo() < player.getMaxAmmo()[0], player.getMusket_ammo() < player.getMaxAmmo()[1]};
+
+        String typeS [] ={"Armadura máxima", "Munición de cañón máxima", "Munición de mosquete máxima"};
+        
+        if (typeB[type] == true) {
+
+            if (typeB[type + 3] == true) {
+
+                if (type == 0) {
+
+                    player.buyArmor();
+
+                    System.out.println("\nLa armadura ha aumentado a " + player.getArmor());
+
+                }
+                if (type == 1) {
+
+                    player.buyCannonAmmo();
+
+                    System.out.println("\nHas comprado balas de cañon, munición actual: " + player.getCannon_ammo());
+
+                }
+                if (type == 2) {
+
+                    player.buyMusketAmmo();
+
+                    System.out.println("\nHas comprado cargas de mosquete, munición actual: " + player.getMusket_ammo());
+
+                }
+
+            } else {
+
+                System.out.println("\n" + typeS[type]);
+
+            }
+        } else {
+
+            System.out.println("\nNo tienes suficiente oro");
+
+        }
+
+    }
+    
+    public static void upgradeMenu(SeaShip player, String[] updateInterface, int type) {
+
+        int i = 1;
+
+        while (i < updateInterface.length && !updateInterface[i].equals("o")) {
+
+            i++;
+
         }
         
-}
-    
+        if (i < updateInterface.length) {
+            
+            boolean typeB [] = {player.getAttackUpgrade()[i + 4] <= player.getGold(), player.getDefenseUpgrade()[i+4] <= player.getGold(), player.getBedsUpgrade()[i+4] <= player.getGold()};
+
+            if (typeB[type] == true) {
+
+                if(type==0){
+                    
+                    System.out.println("\nLa adquisición de esta mejora aumenta el daño a " + player.getAttackUpgrade()[i] + " Atk");
+
+                    player.upgradeAttack(i);
+                    
+                }
+                
+                if(type==1){
+                    
+                    System.out.println("\nLa adquisición de esta mejora aumenta la defensa a " + player.getDefenseUpgrade()[i] + " Def");
+                            
+                    player.upgradeDefense(i);
+                    
+                }
+                
+                if(type==2){
+                    
+                    System.out.println("\nLa adquisición de esta mejora aumenta la capacidad a " + player.getBedsUpgrade()[i] + " catres");
+                            
+                    player.upgradeBeds(i);
+                    
+                }
+
+            } else {
+
+                System.out.println("\nNo tienes suficiente oro");
+
+            }
+
+        } else {
+
+            System.out.println("\nNo hay mejoras disponibles");
+
+        }
+
+    }
+
 }

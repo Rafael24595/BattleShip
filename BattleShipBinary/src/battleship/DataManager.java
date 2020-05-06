@@ -1,356 +1,311 @@
 
 package battleship;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class DataManager {
-    
-    public static ArrayList newSaveData(int loadType) throws IOException{
-        
+
+    public static ArrayList newSaveData(int loadType) throws IOException {
+
         Scanner keyboard = new Scanner(System.in);
         
-        ArrayList loadInf = new ArrayList ();
+        Date date = new Date();
         
+        String saveDate = String.format("%s-%s-%s", date.toString().substring(4, 7), date.toString().substring(8, 10), date.toString().substring(25, 29));
+
+        File file = new File("File1.bin");
+        
+        ArrayList loadInf = new ArrayList();
+        
+        boolean verify = false;
+
         int increase = 1;
-        
-        int option = 0;
-        
+
         String name = "";
-                
-                String subname = "";
-                
-                boolean verify = false;
-                
-                while(verify == false){
-                    
-                    System.out.print("\nIntroduce un nombre: ");
-                
-                    name = keyboard.next();
-                    
-                    verify = DataManager.validateString(name);
-                    
-                }
-                
-                verify = false;
-                
-                while(verify == false){
-                    
-                    System.out.print("\nIntroduce un apellido: ");
-                
-                    subname = keyboard.next(); 
-                    
-                    verify = DataManager.validateString(subname);
-                    
-                }
-                
-                
-                
-                int country = 0;
-                
-                while (country < 1 || country > 3){
-                    
-                    System.out.println("\nAhora elige una de las siguientes naciones: \n1.-España \n2.-Gran Bretaña \n3.-Francia\n");
-                    
-                    country = keyboard.nextInt();
-                    
-                }
-                
-                
-                
-                int seaShip = 0;
-                
-                while (seaShip < 1 || seaShip > 3){
-                    
-                    System.out.println("\nIntroduce la clase de navio que quieres: \n1.-Goleta \n2.-Fragata \n3.-Buque\n");
-                    
-                    seaShip = keyboard.nextInt();
-                    
-                }
-                
-                File file = new File("File1" + ".bin");
 
-                while(file.exists() && increase < 4){
-                    
-                     increase++;
-                     
-                     if (increase < 4){
-                         
-                        file = new File("File" + increase+ ".bin");
-                     }
+        String subname = "";
+        
+        int country = 0;
+        
+        int seaShip = 0;
 
-                } 
+        while (verify == false) {
+
+            System.out.print("\nIntroduce un nombre: ");
+
+            name = keyboard.next();
+
+            verify = DataManager.validateString(name);
+
+        }
+
+        verify = false;
+
+        while (verify == false) {
+
+            System.out.print("\nIntroduce un apellido: ");
+
+            subname = keyboard.next();
+
+            verify = DataManager.validateString(subname);
+
+        }
+
+        while (country < 1 || country > 3) {
+
+            try{
                 
-                if (increase==4){
-                    
-                    String[] slotNames = new String[3];
-                    
-                    String[] dates = new String [3];
-                    
-                    for (int i = 0; i < 3; i++) {
-                        String slot = "File" + (i+1) + ".bin";
-                        File fileExist = new File(slot);
-                        if (fileExist.exists()){
-                            ArrayList saveSlot = DataManager.readFile(slot);
-                            String slotName = (String)saveSlot.get(1);
-                            String date = (String)saveSlot.get(14);
-                            slotNames [i] = slotName;
-                            dates[i] = date;
-                        }
+                System.out.println("\nAhora elige una de las siguientes naciones: \n1.-España \n2.-Gran Bretaña \n3.-Francia\n");
 
-                    } 
-
-                    System.out.println("\nTodas las ranuras están ocupadas ¿Quieres sobrescribir alguna? \n1.-" + slotNames [0] + " -> " + dates[0] + "\n2.-" + slotNames [1] + " -> " + dates[1] + "\n3.-" + slotNames [2] + " -> " + dates[2] + "\n4.-Salir\n");
-                    
-                   while(option < 1 || option > 4) {
-
-                    option = keyboard.nextInt();
-                    
-                   }
-
-                    switch (option){
-                        
-                        case 1 :
-                            
-                            increase=1;
-                            
-                            break;
-                        case 2 :
-                            
-                            increase=2;
-                            
-                            break;
-                        case 3 :         
-                            
-                            increase=3;
-                            
-                        break;
-                        case 4 :     
-                            
-                            increase=4;
-                            
-                            loadType = 0;
-                            
-                        break;
-                    }
-                    
-                    file = new File("File" + increase+ ".bin");
-                    
-                }
+                country = keyboard.nextInt();
                 
-                if(increase < 4){
-                    
-                try {
-            
-                 FileOutputStream fos = new FileOutputStream(file);
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+        }
+
+        while (seaShip < 1 || seaShip > 3) {
+
+            try{
+                
+                System.out.println("\nIntroduce la clase de navio que quieres: \n1.-Goleta \n2.-Fragata \n3.-Buque\n");
+
+                seaShip = keyboard.nextInt();
+                
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+        }
+
+        while (file.exists() && increase < 4) {
+
+            increase++;
+
+            if (increase < 4) {
+
+                file = new File(String.format("File%d.bin", increase));
+            }
+
+        }
+
+        if (increase < 4) {
+
+            try {
+
+                FileOutputStream fos = new FileOutputStream(file);
             
                  DataOutputStream dos = new DataOutputStream(fos);
                  
-                 dos.writeUTF("i_sh:" + (seaShip - 1) + "\n");
-
-                 dos.writeUTF("s_nb:" + name + "\n");
+                 dos.writeUTF(String.format("i_sh:%d\n", (seaShip - 1)));
+     
+                 dos.writeUTF(String.format("s_nb:%s\n", name));
                  
-                 dos.writeUTF("s_sn:" + subname + "\n");
+                 dos.writeUTF(String.format("s_sn:%s\n", subname));
                  
-                 dos.writeUTF("i_cn:" + (country -1) + "\n");
+                 dos.writeUTF(String.format("i_cn:%d\n", (country -1)));
                  
                  dos.writeUTF("---\n");
                  
-                 dos.writeUTF("f_fl:" + increase + "\n");
-                     
-                 dos.writeUTF("b_nw:" + 0 + "\n");
+                 dos.writeUTF(String.format("f_fl:%d\n", increase));
+                 
+                 dos.writeUTF(String.format("b_nw:%d\n", 0));
+                 
+                 dos.writeUTF(String.format("d_dt:%s\n", saveDate));                  
                      
                  dos.writeUTF("<>");
 
                  dos.close();
+                 
+                 fos.close();
 
-                }catch (IOException e){
-   }
-                
+            } catch (IOException e) {}
+
         }
         
-                loadInf.add(0, file);
+        if (increase == 4) {
+
+            String[] slotNames = DataManager.fileName();
+
+            do {
+
+                try{
                 
-                loadInf.add(1, increase);
+                    System.out.println(String.format("\nTodas las ranuras están ocupadas ¿Quieres sobrescribir alguna? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n4.-Salir\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+
+                    increase = keyboard.nextInt();
                 
-                loadInf.add(2, loadType);
-                
-                return loadInf;
-                
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+            } while (increase < 1 || increase > 4);
+
+            if (increase == 4) {
+
+                loadType = 0;
+
+            }
+
+            file = new File(String.format("File%d.bin", increase));
+
+        }
+
+        loadInf.add(0, increase);
+
+        loadInf.add(1, loadType);
+
+        return loadInf;
+
     }
-    
-    public static ArrayList loadData(int loadType) throws IOException{
-        
+
+    public static ArrayList loadData(int loadType) throws IOException {
+
         Scanner keyboard = new Scanner(System.in);
         
-        ArrayList loadInf = new ArrayList ();
-        
-        File file;
-        
-        int increase = 1;
-        
-        int option = 0;
-        
-         String[] slotNames = {"Slot-1","Slot-2","Slot-3"};
-               
-               String[] dates = new String [3];
-                    
-                    for (int i = 0; i < 3; i++) {
-                        String slot = "File" + (i+1) + ".bin";
-                        File fileExist = new File(slot);
-                        if (fileExist.exists()){
-                            ArrayList saveSlot = DataManager.readFile(slot);
-                            String slotName = (String)saveSlot.get(1);
-                            String date = (String)saveSlot.get(14);
-                            slotNames [i] = slotName;
-                            dates[i] = date;
-                        }
+        String[] slotNames = DataManager.fileName();
 
-                    } 
-                    
-                    file = new File("");
-                    
-                    while(!file.exists() && option != 4){
-                        
-                        System.out.println("\nPartidas disponibles \n1.-" + slotNames [0] + " -> " + dates[0] + "\n2.-" + slotNames [1] + " -> " + dates[1] + "\n3.-" + slotNames [2] + " -> " + dates[2] + "\n4.-Atras\n");
-                    
-                        option = keyboard.nextInt();
-                    
-                    switch (option){
-                        
-                        case 1 :
-                            
-                            increase=1;
-                            
-                            break;
-                        case 2 :
-                            
-                            increase=2;
-                            
-                            break;
-                        case 3 : 
-                            
-                            increase=3;
-                            
-                        break;
-                        
-                        case 4 :                          
-                            loadType = 0;                           
-                        break;
-                    }
-                    
-                    file = new File("File" + increase + ".bin");
-                    
-                    }
-                                  
-                loadInf.add(0, file);
+        ArrayList loadInf = new ArrayList();
+
+        int increase = 1;
+
+        do {
+
+            try{
                 
-                loadInf.add(1, increase);
+                System.out.println(String.format("\nPartidas disponibles \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+
+                increase = keyboard.nextInt();
                 
-                loadInf.add(2, loadType);
-                
-                return loadInf;
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+
+        } while (increase != 0 && increase != Integer.parseInt(slotNames[6]) && increase != Integer.parseInt(slotNames[7]) && increase != Integer.parseInt(slotNames[8]));
+
+        if (increase == 0) {
+
+            loadType = 0;
+
+        }
+
+        loadInf.add(0, increase);
+
+        loadInf.add(1, loadType);
+
+        return loadInf;
+
+    }
+    
+    public static void deleteSaveFile() throws IOException{
         
+        Scanner keyboard = new Scanner(System.in);
+
+        String[] slotNames = DataManager.fileName();
+
+        int delete = 0;
+        
+        if (Integer.parseInt(slotNames[6]) != 0 || Integer.parseInt(slotNames[7]) != 0 || Integer.parseInt(slotNames[8]) != 0) {
+
+            do {
+
+                try {
+
+                    System.out.println(String.format("\n¿Qué partida quieres borrar? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+
+                    delete = keyboard.nextInt();
+
+
+                } catch (InputMismatchException | NumberFormatException e) {
+                    keyboard.next();
+                }
+
+            } while (delete != 0 && delete != Integer.parseInt(slotNames[6]) && delete != Integer.parseInt(slotNames[7]) && delete != Integer.parseInt(slotNames[8]));
+
+            if(delete != 0){
+                
+                File file = new File(String.format("File%d.bin", delete));
+                
+                file.delete();
+                
+            }
+            
+        }
+        else{
+            
+            System.out.println("No hay partidas guardadas");
+            
+        }
+
     }
     
     public static SeaShip generateGameData(ArrayList saveData, int loadType) throws IOException{
         
-        ArrayList<SeaShip> myBoat = new ArrayList<SeaShip>();
+        ArrayList<SeaShip> myBoat = new ArrayList<>();
+        
+        SeaShip player = new SeaShipSchooner();
         
         if((int)saveData.get(0) == 2){
             
-            SeaShipWar player_War = new SeaShipWar();
-            
-            if(loadType == 1 || saveData.size() == 6){
+            if(loadType == 1 || saveData.size() == 7){
                 
-                player_War = new SeaShipWar((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));
-                
-                player_War.createTripulation();          
+                player = new SeaShipWar((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));        
                 
             }
-            else{
-                
-                if(loadType == 2){
-                    
-                    player_War = new SeaShipWar((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int [])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
-
-                    player_War.loadTripulation();
-                    
-                    player_War.worker_list.get(0).createCaptain(player_War.getName(), player_War.getSubname());
-                    
-                }
-
+            else if(loadType == 2){
+   
+                player = new SeaShipWar((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int [])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
+ 
             }
-            
-            myBoat.add(0, player_War);
             
         }
+        
         if((int)saveData.get(0) == 1){
             
-            SeaShipFrigate player_Frigate = new SeaShipFrigate();
-            
-            if(loadType == 1 || saveData.size() == 6){
+            if(loadType == 1 || saveData.size() == 7){
                 
-                player_Frigate = new SeaShipFrigate((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));
-                
-                player_Frigate.createTripulation();          
+                player = new SeaShipFrigate((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));       
                 
             }
-            else{
-                
-                if(loadType == 2){
+            else if(loadType == 2){
                     
-                    player_Frigate = new SeaShipFrigate((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int[])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
-
-                    player_Frigate.loadTripulation();
-                    
-                    player_Frigate.worker_list.get(0).createCaptain(player_Frigate.getName(), player_Frigate.getSubname());
-                    
-                }
+                player = new SeaShipFrigate((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int[])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
 
             }
-            
-            myBoat.add(0, player_Frigate);
             
         }
+        
         if((int)saveData.get(0) == 0){
             
-            SeaShipSchooner player_Schooner = new SeaShipSchooner();
-            
-            if(loadType == 1 || saveData.size() == 6){
+            if(loadType == 1 || saveData.size() == 7){
                 
-                player_Schooner = new SeaShipSchooner((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));
-                
-                player_Schooner.createTripulation();          
+                player = new SeaShipSchooner((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5));      
                 
             }
-            else{
-                
-                if(loadType == 2){
+            else if(loadType == 2){
                     
-                    player_Schooner = new SeaShipSchooner((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int [])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
-
-                    player_Schooner.loadTripulation();
-                    
-                    player_Schooner.worker_list.get(0).createCaptain(player_Schooner.getName(), player_Schooner.getSubname());
-                    
-                }
+                player = new SeaShipSchooner((String)saveData.get(1), (String)saveData.get(2), (int)saveData.get(3), (int)saveData.get(4), (int)saveData.get(5), (int)saveData.get(6), (int)saveData.get(7),(int)saveData.get(8),(int)saveData.get(9),(int)saveData.get(10),(int [])saveData.get(11), (int)saveData.get(12), (int)saveData.get(13));
 
             }
             
-            myBoat.add(0, player_Schooner);
+        }
+        
+        myBoat.add(0, player);
+        
+        if(loadType == 1 || saveData.size() == 7){
             
+                myBoat.get(0).createTripulation(myBoat.get(0).getBeds()[2], 0);          
+                
+        }else if(loadType == 2){
+
+                myBoat.get(0).loadTripulation();
+                    
+                myBoat.get(0).worker_list.get(0).createCaptain(myBoat.get(0).getName(), myBoat.get(0).getSubname());
+
         }
         
         return myBoat.get(0);
@@ -361,8 +316,6 @@ public class DataManager {
         
         Scanner keyboard = new Scanner (System.in);
         
-        File file;
-        
         int saveSlotInt = seaShip.getSaveSlot();
         
         int option = 0;
@@ -371,26 +324,19 @@ public class DataManager {
         
         Date date = new Date();
         
-        String saveDate = date.toString().substring(4, 7) + "-" + date.toString().substring(8, 10) + "-" + date.toString().substring(25, 29);
+        String saveDate = new StringBuilder(date.toString().substring(4, 7) + "-" + date.toString().substring(8, 10) + "-" + date.toString().substring(25, 29)).toString();
         
-        String[] slotNames = {"Slot-1","Slot-2","Slot-3"};
-                    
-        for (int i = 0; i < 3; i++) {
-            String slot = "File" + (i+1) + ".bin";
-            file = new File(slot);
-            if (file.exists()){
-                ArrayList saveSlot = readFile(slot);
-                String slotName = (String)saveSlot.get(1);
-                slotNames [i] = slotName;
-            }
-            
-        }
+        String[] slotNames = DataManager.fileName();
         
         while(option != 1 && option != 2){
             
-            System.out.println("\n¿Deseas guardar en la ranura por defecto? \n1.-Sí \n2.-No\n");
+            try{
+                
+                System.out.println("\n¿Deseas guardar en la ranura por defecto? \n1.-Sí \n2.-No\n");
             
-            option = keyboard.nextInt();  
+                option = keyboard.nextInt(); 
+                
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
             
         }           
         
@@ -400,9 +346,13 @@ public class DataManager {
             
             while (saveSlotInt < 0 || saveSlotInt > 3){
                 
-                System.out.println("\n¿Qué ranura deseas sobreescribir? \n1.-" + slotNames[0] + "\n2.-" + slotNames[1] + "\n3.-" + slotNames[2] + "\n");
+                try{
+                
+                System.out.println(String.format("\n¿Qué ranura deseas sobreescribir? \n1.-%s\n2.-%s\n3.-%s\n", slotNames[0], slotNames[1], slotNames[2]));
             
                 saveSlotInt = keyboard.nextInt();  
+                
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
                 
             }
 
@@ -413,98 +363,93 @@ public class DataManager {
             typeShip = 0;
             
         }
-        else{
-            
-            if(seaShip.getClass().getSimpleName().charAt(7) == 70 ){
+        else if(seaShip.getClass().getSimpleName().charAt(7) == 70 ){
             
             typeShip = 1;
             
-            }
-            else{
-                
-               if(seaShip.getClass().getSimpleName().charAt(7) == 87 ){
+        }
+        else if(seaShip.getClass().getSimpleName().charAt(7) == 87 ){
             
-                typeShip = 2;
-            
-                }
-               else{
-                   
-                   System.out.println("\nError en los datos");
-                   
-               }
-                
-            }
+            typeShip = 2;
             
         }
+        else{
+        
+            System.out.println("\nError en los datos");
+        
+        }
 
-        file = new File("File" + saveSlotInt + ".bin");
+        File file = new File("File" + saveSlotInt + ".bin");
         
         try {
             
-                FileOutputStream fos = new FileOutputStream(file);
+            FileOutputStream fos = new FileOutputStream(file);
             
                 DataOutputStream dos = new DataOutputStream(fos);
-                 
-                dos.writeUTF("i_sh:" + typeShip + "\n");
-
-                dos.writeUTF("s_nb:" + seaShip.getName() + "\n");
                 
-                dos.writeUTF("s_sn:" + seaShip.getSubname() + "\n");
+                dos.writeUTF(String.format("i_sh:%d\n", typeShip));
+                
+                dos.writeUTF(String.format("s_nb:%s\n", seaShip.getName()));
+                
+                dos.writeUTF(String.format("s_sn:%s\n", seaShip.getSubname()));
                  
-                dos.writeUTF("i_cn:" + seaShip.getCountry() + "\n");
+                dos.writeUTF(String.format("i_cn:%d\n", seaShip.getCountry()));
 
-                dos.writeUTF("i_hl:" + (int)seaShip.getHealth() + "\n");
+                dos.writeUTF(String.format("i_hl:%d\n", (int)seaShip.getHealth()));
+                
+                dos.writeUTF(String.format("i_ar:%d\n", seaShip.getArmor()));
                  
-                dos.writeUTF("i_ar:" + seaShip.getArmor() + "\n");
+                dos.writeUTF(String.format("i_ac:%d\n", seaShip.getCannon_ammo()));
+
+                dos.writeUTF(String.format("i_am:%d\n", seaShip.getMusket_ammo()));
                  
-                dos.writeUTF("i_ac:" + seaShip.getCannon_ammo() + "\n");
-                 
-                dos.writeUTF("i_am:" + seaShip.getMusket_ammo() + "\n");
-                 
-                dos.writeUTF("i_gd:" + seaShip.getGold() + "\n");
+                dos.writeUTF(String.format("i_gd:%d\n", seaShip.getGold()));
                  
                 dos.writeUTF("---\n");
+                 
+                dos.writeUTF(String.format("i_ap:%d\n", (int)seaShip.getAttackP()));
+                 
+                dos.writeUTF(String.format("i_dp:%d\n", (int)seaShip.getDefenseP()));
+                 
+                dos.writeUTF(String.format("a_bdt:%d\n", seaShip.getBeds()[0]));
                      
-                dos.writeUTF("i_ap:" + (int)seaShip.getAttackP() + "\n");
+                dos.writeUTF(String.format("a_bdm:%d\n", seaShip.getBeds()[1]));
                      
-                dos.writeUTF("i_dp:" + (int)seaShip.getDefenseP() + "\n");
+                dos.writeUTF(String.format("a_bda:%d\n", seaShip.getBeds()[2]));
                      
-                dos.writeUTF("a_bdt:" + seaShip.getBeds()[0] + "\n");
+                dos.writeUTF(String.format("f_fl:%d\n", saveSlotInt));
                      
-                dos.writeUTF("a_bdm:" + seaShip.getBeds()[1] + "\n");
+                dos.writeUTF(String.format("b_nw:%d\n", seaShip.getNewGame()));
                      
-                dos.writeUTF("a_bda:" + seaShip.getBeds()[2] + "\n");
-                     
-                dos.writeUTF("f_fl:" + saveSlotInt + "\n");
-                     
-                dos.writeUTF("b_nw:" + seaShip.getNewGame() + "\n");
-
-                dos.writeUTF("d_dt:" + saveDate + "\n");
+                dos.writeUTF(String.format("d_dt:%s\n", saveDate));
                      
                 dos.writeUTF("<>\n");
-
-                for (int i = 0; i < seaShip.getBeds()[2]; i++) {
+            
+            for (int i = 0; i < seaShip.getBeds()[2]; i++) {
                 
-                    String worker = "w_";
+                StringBuilder data = new StringBuilder();
+                
+                data.append("w_");
                     
                     if (i <= 9){
                         
-                        worker = worker + "0";
+                        data.append("0");
                         
                     }
                     
-                    worker = worker + i + ":" + seaShip.getWorker_list().get(i).getName() + " " + seaShip.getWorker_list().get(i).getSubname() + " " + seaShip.getWorker_list().get(i).getRange() + "\n";
+                    data.append(i).append(":").append(seaShip.getWorker_list().get(i).getName()).append(" ").append(seaShip.getWorker_list().get(i).getSubname()).append(" ").append(seaShip.getWorker_list().get(i).getRange()).append("\n");
                     
-                    dos.writeUTF(worker);
+                    dos.writeUTF(data.toString());
                     
-                }      
-                
+                }  
+            
                 dos.writeUTF("<>");
                 
                 dos.close();
-
-                }catch (IOException e){
-   }
+                
+                fos.close();
+                
+                }catch (IOException e){}
         
     }
     
@@ -516,6 +461,8 @@ public class DataManager {
         
         String lines;
         
+        int cont=0;
+        
         try{
             File readFile = new File(file);
             
@@ -523,48 +470,38 @@ public class DataManager {
             
             DataInputStream dis = new DataInputStream(fis);
             
-            while (true) {
+            try{
+                
+                while (true) {
 
                 lines = dis.readUTF();
+                
+                boolean string = false;
 
-                int information = 0;
+                boolean array = false;
 
                 String s_data = "";
 
                 int i_data = -1;
 
-                boolean string = false;
-
-                boolean array = false;
-
                 if (lines.charAt(0) == 115 || lines.charAt(0) == 100) {
+                    
                     string = true;
 
                 }
 
                 if (lines.charAt(0) == 97) {
+                    
                     array = true;
 
                 }
 
-                for (int i = 0; i < lines.length(); i++) {
+                if (lines.indexOf(":") != -1 && lines.charAt(0) != 119) {
 
-                    if (lines.charAt(i) == 58 && lines.charAt(0) != 119) {
-                        information = 1;
-                    }
-
-                    if (information == 1 && lines.charAt(i) != 32 && lines.charAt(i) != 58 && lines.charAt(i) != 10) {
-
-                        s_data = s_data + lines.charAt(i);
-
-                    }
-
-                }
-
-                if (s_data != "") {
-
+                    s_data = lines.split(":")[1].replaceAll("\n", "");
+                    
                     if (string == false) {
-
+                        
                         i_data = Integer.parseInt(s_data);
 
                         if (array == false) {
@@ -573,15 +510,16 @@ public class DataManager {
 
                         } else {
 
-                            a_data[a_data[3]] = i_data;
+                            a_data[cont] = i_data;
 
-                            a_data[3] = a_data[3] + 1;
-
-                            if (a_data[3] == 2) {
-
+                            cont++;
+                            
+                            if(cont==2){
+                                
                                 saveData.add(a_data);
-
+                                
                             }
+                            
                         }
 
                     } else {
@@ -590,14 +528,21 @@ public class DataManager {
 
                     }
 
-                }
-
+                }     
+                
             }
-            
-        }catch(IOException e){}
+                
+            }catch(EOFException e){}
 
+            dis.close();
+            
+            fis.close();
+            
+        }catch(IOException e){
+        }
         
         return saveData;
+        
     }
     
     public static boolean validateString(String name){
@@ -624,6 +569,33 @@ public class DataManager {
         }
         
         return valid;
+    }
+ 
+    public static String[] fileName() throws IOException {
+ 
+        String[] slotNames = {"Slot-1", "Slot-2", "slot-3", "Empty-Date", "Empty-date", "Empty-Date", "0", "0", "0"};
+
+        for (int i = 0; i < 3; i++) {
+            String slot = String.format("File%d.bin", i + 1);
+            File fileExist = new File(slot);
+            if (fileExist.exists()) {
+                ArrayList saveSlot = DataManager.readFile(slot);
+                String slotName = (String) saveSlot.get(1);
+                slotNames[i] = slotName;
+                if(saveSlot.size() > 10){
+                    String date = (String) saveSlot.get(14);
+                    slotNames[i+3] = date;
+                }
+                else{
+                    String date = (String) saveSlot.get(6);
+                    slotNames[i+3] = date;
+                }
+                slotNames[i + 6] = String.valueOf(i+1);
+            }
+
+        }
+        
+        return slotNames;
     }
     
 }
