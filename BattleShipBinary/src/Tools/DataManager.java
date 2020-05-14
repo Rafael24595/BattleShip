@@ -1,6 +1,10 @@
 
-package battleship;
+package Tools;
 
+import Classes.Ship.War.SeaShipWar;
+import Classes.Ship.Schooner.SeaShipSchooner;
+import Classes.Ship.Frigate.SeaShipFrigate;
+import Classes.Ship.SeaShip;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -97,39 +101,7 @@ public class DataManager {
 
         }
 
-        if (increase < 4) {
-
-            try {
-
-                FileOutputStream fos = new FileOutputStream(file);
-            
-                 DataOutputStream dos = new DataOutputStream(fos);
-                 
-                 dos.writeUTF(String.format("i_sh:%d\n", (seaShip - 1)));
-     
-                 dos.writeUTF(String.format("s_nb:%s\n", name));
-                 
-                 dos.writeUTF(String.format("s_sn:%s\n", subname));
-                 
-                 dos.writeUTF(String.format("i_cn:%d\n", (country -1)));
-                 
-                 dos.writeUTF("---\n");
-                 
-                 dos.writeUTF(String.format("f_fl:%d\n", increase));
-                 
-                 dos.writeUTF(String.format("b_nw:%d\n", 0));
-                 
-                 dos.writeUTF(String.format("d_dt:%s\n", saveDate));                  
-                     
-                 dos.writeUTF("<>");
-
-                 dos.close();
-                 
-                 fos.close();
-
-            } catch (IOException e) {}
-
-        }
+        
         
         if (increase == 4) {
 
@@ -139,21 +111,53 @@ public class DataManager {
 
                 try{
                 
-                    System.out.println(String.format("\nTodas las ranuras están ocupadas ¿Quieres sobrescribir alguna? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n4.-Salir\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+                    System.out.printf("\nTodas las ranuras están ocupadas ¿Quieres sobrescribir alguna? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Salir\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
                     increase = keyboard.nextInt();
                 
                 }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
 
-            } while (increase < 1 || increase > 4);
+            } while (increase < 0 || increase > 3);
 
-            if (increase == 4) {
+            if (increase == 0) {
 
                 loadType = 0;
 
             }
 
-            file = new File(String.format("File%d.bin", increase));
+        }
+        
+        if (increase != 0 && increase < 4) {
+
+            try {
+
+                FileOutputStream fos = new FileOutputStream(new File(String.format("File%d.bin", increase)));
+
+                DataOutputStream dos = new DataOutputStream(fos);
+
+                dos.writeUTF(String.format("i_sh:%d\n", (seaShip - 1)));
+
+                dos.writeUTF(String.format("s_nb:%s\n", name));
+
+                dos.writeUTF(String.format("s_sn:%s\n", subname));
+
+                dos.writeUTF(String.format("i_cn:%d\n", (country - 1)));
+
+                dos.writeUTF("---\n");
+
+                dos.writeUTF(String.format("f_fl:%d\n", increase));
+
+                dos.writeUTF(String.format("b_nw:%d\n", 0));
+
+                dos.writeUTF(String.format("d_dt:%s\n", saveDate));
+
+                dos.writeUTF("<>");
+
+                dos.close();
+
+                fos.close();
+
+            } catch (IOException e) {}
 
         }
 
@@ -179,7 +183,7 @@ public class DataManager {
 
             try{
                 
-                System.out.println(String.format("\nPartidas disponibles \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+                System.out.printf("\nPartidas disponibles \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
                 increase = keyboard.nextInt();
                 
@@ -215,7 +219,7 @@ public class DataManager {
 
                 try {
 
-                    System.out.println(String.format("\n¿Qué partida quieres borrar? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]));
+                    System.out.printf("\n¿Qué partida quieres borrar? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
                     delete = keyboard.nextInt();
 
@@ -298,13 +302,13 @@ public class DataManager {
         
         if(loadType == 1 || saveData.size() == 7){
             
-                myBoat.get(0).createTripulation(myBoat.get(0).getBeds()[2], 0);          
+                myBoat.get(0).createTripulation(myBoat.get(0).getBeds()[2], 0);  
                 
         }else if(loadType == 2){
 
                 myBoat.get(0).loadTripulation();
                     
-                myBoat.get(0).worker_list.get(0).createCaptain(myBoat.get(0).getName(), myBoat.get(0).getSubname());
+                myBoat.get(0).getWorker_list().get(0).createCaptain(myBoat.get(0).getName(), myBoat.get(0).getSubname());
 
         }
         
@@ -348,7 +352,7 @@ public class DataManager {
                 
                 try{
                 
-                System.out.println(String.format("\n¿Qué ranura deseas sobreescribir? \n1.-%s\n2.-%s\n3.-%s\n", slotNames[0], slotNames[1], slotNames[2]));
+                System.out.printf("\n¿Qué ranura deseas sobreescribir? \n1.-%s\n2.-%s\n3.-%s\n\n", slotNames[0], slotNames[1], slotNames[2]);
             
                 saveSlotInt = keyboard.nextInt();  
                 
@@ -378,52 +382,50 @@ public class DataManager {
             System.out.println("\nError en los datos");
         
         }
-
-        File file = new File("File" + saveSlotInt + ".bin");
         
         try {
             
-            FileOutputStream fos = new FileOutputStream(file);
-            
-                DataOutputStream dos = new DataOutputStream(fos);
-                
-                dos.writeUTF(String.format("i_sh:%d\n", typeShip));
-                
-                dos.writeUTF(String.format("s_nb:%s\n", seaShip.getName()));
-                
-                dos.writeUTF(String.format("s_sn:%s\n", seaShip.getSubname()));
-                 
-                dos.writeUTF(String.format("i_cn:%d\n", seaShip.getCountry()));
+            FileOutputStream fos = new FileOutputStream(new File("File" + saveSlotInt + ".bin"));
 
-                dos.writeUTF(String.format("i_hl:%d\n", (int)seaShip.getHealth()));
-                
-                dos.writeUTF(String.format("i_ar:%d\n", seaShip.getArmor()));
-                 
-                dos.writeUTF(String.format("i_ac:%d\n", seaShip.getCannon_ammo()));
+            DataOutputStream dos = new DataOutputStream(fos);
 
-                dos.writeUTF(String.format("i_am:%d\n", seaShip.getMusket_ammo()));
-                 
-                dos.writeUTF(String.format("i_gd:%d\n", seaShip.getGold()));
-                 
-                dos.writeUTF("---\n");
-                 
-                dos.writeUTF(String.format("i_ap:%d\n", (int)seaShip.getAttackP()));
-                 
-                dos.writeUTF(String.format("i_dp:%d\n", (int)seaShip.getDefenseP()));
-                 
-                dos.writeUTF(String.format("a_bdt:%d\n", seaShip.getBeds()[0]));
-                     
-                dos.writeUTF(String.format("a_bdm:%d\n", seaShip.getBeds()[1]));
-                     
-                dos.writeUTF(String.format("a_bda:%d\n", seaShip.getBeds()[2]));
-                     
-                dos.writeUTF(String.format("f_fl:%d\n", saveSlotInt));
-                     
-                dos.writeUTF(String.format("b_nw:%d\n", seaShip.getNewGame()));
-                     
-                dos.writeUTF(String.format("d_dt:%s\n", saveDate));
-                     
-                dos.writeUTF("<>\n");
+            dos.writeUTF(String.format("i_sh:%d\n", typeShip));
+
+            dos.writeUTF(String.format("s_nb:%s\n", seaShip.getName()));
+
+            dos.writeUTF(String.format("s_sn:%s\n", seaShip.getSubname()));
+
+            dos.writeUTF(String.format("i_cn:%d\n", seaShip.getCountry()));
+
+            dos.writeUTF(String.format("i_hl:%d\n", (int) seaShip.getHealth()));
+
+            dos.writeUTF(String.format("i_ar:%d\n", seaShip.getArmor()));
+
+            dos.writeUTF(String.format("i_ac:%d\n", seaShip.getCannon_ammo()));
+
+            dos.writeUTF(String.format("i_am:%d\n", seaShip.getMusket_ammo()));
+
+            dos.writeUTF(String.format("i_gd:%d\n", seaShip.getGold()));
+
+            dos.writeUTF("---\n");
+
+            dos.writeUTF(String.format("i_ap:%d\n", (int) seaShip.getAttackP()));
+
+            dos.writeUTF(String.format("i_dp:%d\n", (int) seaShip.getDefenseP()));
+
+            dos.writeUTF(String.format("a_bdt:%d\n", seaShip.getBeds()[0]));
+
+            dos.writeUTF(String.format("a_bdm:%d\n", seaShip.getBeds()[1]));
+
+            dos.writeUTF(String.format("a_bda:%d\n", seaShip.getBeds()[2]));
+
+            dos.writeUTF(String.format("f_fl:%d\n", saveSlotInt));
+
+            dos.writeUTF(String.format("b_nw:%d\n", seaShip.getNewGame()));
+
+            dos.writeUTF(String.format("d_dt:%s\n", saveDate));
+
+            dos.writeUTF("<>\n");
             
             for (int i = 0; i < seaShip.getBeds()[2]; i++) {
                 
@@ -457,20 +459,13 @@ public class DataManager {
         
         ArrayList saveData = new ArrayList();
         
-        int a_data [] = new int[] {0,0,0,0};
+        int a_data [] = new int[] {0,0,0};
         
         String lines;
         
         int cont=0;
         
-        try{
-            File readFile = new File(file);
-            
-            FileInputStream fis = new FileInputStream(readFile);
-            
-            DataInputStream dis = new DataInputStream(fis);
-            
-            try{
+        try(DataInputStream dis = new DataInputStream(new FileInputStream(file));){       
                 
                 while (true) {
 
@@ -531,15 +526,9 @@ public class DataManager {
                 }     
                 
             }
-                
-            }catch(EOFException e){}
-
-            dis.close();
-            
-            fis.close();
-            
-        }catch(IOException e){
-        }
+ 
+        }catch(EOFException e){   
+        }catch(IOException e){}
         
         return saveData;
         

@@ -1,6 +1,8 @@
 
-package battleship;
+package Classes.Ship;
 
+import Classes.Worker.Worker;
+import Tools.DataManager;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +29,7 @@ public abstract class SeaShip {
     private int gold;
     private int turn;
     private int saveSlot;
-    private int newGame; /*Useless*/
+    private int newGame;                                    /*Useless*/
     
     private int maxHealth;
     private final int maxArmor = 100;
@@ -39,7 +41,7 @@ public abstract class SeaShip {
     private double attackP;
     private double defenseP;
     private int speedP;
-    private int beds [] = new int [4];                                    /*AvailableBeds - MaxBeds(*) - OcupiedBeds*/
+    private int beds [] = new int [3];                       /*AvailableBeds - MaxBeds(*) - OcupiedBeds - Counter(Useless)*/
     
     private int attackUpgrade[];
     private int defenseUpgrade[];
@@ -282,7 +284,7 @@ public abstract class SeaShip {
         
         Scanner keyboard = new Scanner(System.in);
         
-        ArrayList<SeaShip> CPU_Boat = new ArrayList<SeaShip>();
+        ArrayList<SeaShip> CPU_Boat = new ArrayList<>();
         
         ArrayList data = new ArrayList();
 
@@ -446,6 +448,8 @@ public abstract class SeaShip {
         
             worker_list.add(worker);
             
+            newBeds--;
+            
         }
         
         if(type==1){
@@ -456,7 +460,7 @@ public abstract class SeaShip {
             
         }
 
-        for (int i = 1; i < newBeds; i++) {
+        for (int i = 0; i < newBeds; i++) {
             range = (int) (Math.random() * 2) + 1;
             name = (int) (Math.random() * 20);
             subname = (int) (Math.random() * 20);
@@ -628,7 +632,7 @@ public abstract class SeaShip {
             
         }
         
-        System.out.print(String.format("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]));
+        System.out.printf("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]);
         
         if(hit [0] == 1.25){
             System.out.print(" critico");
@@ -642,7 +646,7 @@ public abstract class SeaShip {
             System.out.print(" estando protegido");
         }
         
-        System.out.print(String.format(" de %d puntos de daño , que ha causado %d bajas \n", (int) formule1, (int)formule4)); 
+        System.out.printf(" de %d puntos de daño , que ha causado %d bajas \n", (int) formule1, (int)formule4); 
         
         enemy.setArmor((int)(enemy.getArmor() - (int)formule1));
         
@@ -651,7 +655,7 @@ public abstract class SeaShip {
             if((-enemy.getArmor()) != (int)formule1 && enemy.getSaveSlot() != -1){
                 
                 
-                System.out.println(String.format("La armadura ha absobrido %d puntos de daño", (int)(formule1 + (enemy.getArmor()))));
+                System.out.printf("La armadura ha absobrido %d puntos de daño \n", (int)(formule1 + (enemy.getArmor())));
                 
             }
             
@@ -664,7 +668,7 @@ public abstract class SeaShip {
             
             if(enemy.getSaveSlot() != -1){
                 
-                System.out.println(String.format("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura", enemy.getArmor()));
+                System.out.printf("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura \n", enemy.getArmor());
                 
             }
  
@@ -679,7 +683,7 @@ public abstract class SeaShip {
         
         if(hit[1]==1){
             
-            System.out.println(String.format("La polvora se ha incendiado durante el ataque provocando un accidente que ha causado %d puntos de daño y %d bajas.", (int)formule2, deads));
+            System.out.printf("La polvora se ha incendiado durante el ataque provocando un accidente que ha causado %d puntos de daño y %d bajas. \n", (int)formule2, deads);
             
         }
         
@@ -761,7 +765,7 @@ public abstract class SeaShip {
             
         }
         
-        System.out.print(String.format("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]));
+        System.out.printf("%s ha recibido un ataque", enemy.worker_list.get(0).getNameS()[enemy.worker_list.get(0).getName()]);
         
         if(hit [0] == 1.25){
             System.out.print(" critico");
@@ -775,7 +779,7 @@ public abstract class SeaShip {
             System.out.print(" estando protegido");
         }
         
-        System.out.print(String.format(" de %d puntos de daño, que ha causado %d bajas \n", (int) formule1, (int)formule2));
+        System.out.printf(" de %d puntos de daño, que ha causado %d bajas \n", (int) formule1, (int)formule2);
         
         enemy.setArmor((int)(enemy.getArmor() - (int)formule1));
         
@@ -783,7 +787,7 @@ public abstract class SeaShip {
             
             if((-enemy.getArmor()) != (int)formule1 && enemy.getSaveSlot() != -1){
                 
-                System.out.print(String.format("La armadura ha absobrido %d puntos de daño", (int)(formule1 + (enemy.getArmor()))));
+                System.out.printf("La armadura ha absobrido %d puntos de daño", (int)(formule1 + (enemy.getArmor())));
                 
             }
             
@@ -796,7 +800,7 @@ public abstract class SeaShip {
             
             if(enemy.getSaveSlot() != -1){
                 
-                System.out.print(String.format("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura", enemy.getArmor()));
+                System.out.printf("La armadura ha aguantado el golpe quedando intactos %d puntos de armadura \n", enemy.getArmor());
                 
             }
  
@@ -907,7 +911,7 @@ public abstract class SeaShip {
             
             worker [2]  = this.worker_list.get(i).getRangeS()[this.worker_list.get(i).getRange()];
             
-            worker_list = String.format("\nNombre: %s - Apellidos: %s - Rango: %s", worker [0], worker [1], worker [2]);
+            worker_list = String.format("%s \nNombre: %s - Apellidos: %s - Rango: %s",worker_list , worker [0], worker [1], worker [2]);
             
             if(developer == 1){
                 
@@ -924,8 +928,6 @@ public abstract class SeaShip {
         String countryS [] = {"España", "Francia", "Gran Bretaña"};
         
         String boat = getClass().getSimpleName();
-        
-        setTurn();
         
         if(boat.charAt(7) == 83){
             
@@ -950,6 +952,8 @@ public abstract class SeaShip {
             }
             
         }
+        
+        setTurn();
         
         StringBuilder data = new StringBuilder("\n====================================================");
         data.append("\n| Capitan: ").append(this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()]).append(" ").append(this.worker_list.get(0).getSubnameS()[this.worker_list.get(0).getSubname()]).append(" | Nacionalidad: " + countryS[country]);

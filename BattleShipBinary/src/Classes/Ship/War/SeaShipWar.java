@@ -1,5 +1,7 @@
 
-package battleship;
+package Classes.Ship.War;
+
+import Classes.Ship.SeaShip;
 
 public class SeaShipWar extends SeaShip {
     
@@ -24,7 +26,6 @@ public class SeaShipWar extends SeaShip {
         super.setBed(0, bedsUpgrade[0]);
         super.setBed(1, bedsUpgrade[3]);
         super.setBed(2, bedsUpgrade[0]);
-        super.setBed(3, 0);
 
     }
     

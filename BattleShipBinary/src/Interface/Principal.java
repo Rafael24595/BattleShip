@@ -1,6 +1,7 @@
 
-package battleship;
+package Interface;
 
+import Classes.Ship.SeaShip;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ public class Principal {
         
         ArrayList<SeaShip> myBoat = new ArrayList<>();
         
-        System.out.println("---------------------------"
-                       + "\n| Bienvenido a BattleShip |"
-                       + "\n---------------------------");
+        System.out.println(new StringBuilder("---------------------------")
+                                   .append("\n| Bienvenido a BattleShip |")
+                                   .append("\n---------------------------"));
         
         myBoat.add(Menu.opening());
         

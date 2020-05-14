@@ -1,6 +1,9 @@
 
-package battleship;
+package Interface;
 
+import Tools.DataManager;
+import Classes.Ship.Frigate.SeaShipFrigate;
+import Classes.Ship.SeaShip;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,6 +42,12 @@ public class Menu {
             case 1:
                 
                 loadInf = DataManager.newSaveData(loadType);
+                
+                if((int)loadInf.get(0) == 0){
+                    
+                    loadType = 0;
+                    
+                }
                 
             break;
             
@@ -161,7 +170,7 @@ public class Menu {
         
         Scanner keyboard = new Scanner(System.in);
         
-        System.out.println(String.format("\nEnemigo %s está preparado para combatir", CPU.getName()));
+        System.out.printf("\nEnemigo %s está preparado para combatir\n", CPU.getName());
         
         int first = player.getSpeedP() - CPU.getSpeedP();
         
@@ -206,7 +215,7 @@ public class Menu {
 
                 if (optionPlayer == 1 || optionPlayer ==2){
                     
-                    System.out.println(String.format("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]));
+                    System.out.printf("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]);
    
                 }
                 
@@ -220,7 +229,7 @@ public class Menu {
                 
                 if (optionCPU == 1 || optionCPU ==2){
                     
-                    System.out.println(String.format("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]));
+                    System.out.printf("\n%s: %dPV --- Tripulación: %d/%d\n%s: %dPV --- Tripulación: %d/%d\n\n", player.getName(), player.getHealth(), player.getBeds()[2], player.getBeds()[0], CPU.getName(), CPU.getHealth(), CPU.getBeds()[2], CPU.getBeds()[0]);
                 }
                 
             }
@@ -263,7 +272,7 @@ public class Menu {
         }
         else if (CPU.getHealth() <= 0 || CPU.getBeds()[2] <= 0 && CPU.getBeds()[2] > -999){
             
-            System.out.println(String.format("\nEnemigo %s ha caido\nSaqueas %d doblones de oro de los restos", CPU.getName(), + CPU.getGold()));
+            System.out.printf("\nEnemigo %s ha caido\nSaqueas %d doblones de oro de los restos\n", CPU.getName(), + CPU.getGold());
                 
             player.setGold(player.getGold() + CPU.getGold());
 
@@ -283,7 +292,7 @@ public class Menu {
                         
                         if (player.getCannon_ammo() > 0 || type == 1){
                             
-                            System.out.println("\n" + playerType[0 + type]);
+                            System.out.printf("\n %s\n", playerType[0 + type]);
 
                             player.cannonAttack(CPU);
                             
@@ -323,7 +332,7 @@ public class Menu {
                     
                     case 3:
                         
-                        System.out.println("\n" + playerType[4 + type]);
+                        System.out.printf("\n %s \n", playerType[4 + type]);
                         
                         player.setDefend(player.getDefensePlus()[1]);
                         
@@ -427,7 +436,7 @@ public class Menu {
                     
                 }
                 
-                System.out.print(String.format(" puntos de salud por %d doblones.\n", fix * player.getPrices()[3]));
+                System.out.printf(" puntos de salud por %d doblones.\n", fix * player.getPrices()[3]);
                 
                 while(fixIt != 1 && fixIt != 2){
                     
@@ -581,9 +590,9 @@ public class Menu {
                 new StringBuilder("----------------------------------------------------------------------------------")
                         .append("\n| 1.- Mejora de armamento| ").append(attackUpdate[1]).append(" +").append(player.getAttackUpgrade()[1]).append(" Atk x ").append(player.getAttackUpgrade()[5]).append(" | ").append(attackUpdate[2]).append(" +").append(player.getAttackUpgrade()[2]).append(" Atk x ").append(player.getAttackUpgrade()[6]).append(" | ").append(attackUpdate[3]).append(" +").append(player.getAttackUpgrade()[3]).append(" Atk x ").append(player.getAttackUpgrade()[7]).append(" | ")
                         .append("\n----------------------------------------------------------------------------------")
-                        .append("\n| 2.- Mejora de defensa  | ").append(defenseUpdate[1]).append(" +").append(player.getDefenseUpgrade()[1]).append(" Atk x ").append(player.getDefenseUpgrade()[5]).append(" | ").append(defenseUpdate[2]).append(" +").append(player.getDefenseUpgrade()[2]).append(" Atk x ").append(player.getDefenseUpgrade()[6]).append(" | ").append(defenseUpdate[3]).append(" +").append(player.getDefenseUpgrade()[3]).append(" Atk x ").append(player.getDefenseUpgrade()[7]).append("  | ")
+                        .append("\n| 2.- Mejora de defensa  | ").append(defenseUpdate[1]).append(" +").append(player.getDefenseUpgrade()[1]).append(" Def x ").append(player.getDefenseUpgrade()[5]).append(" | ").append(defenseUpdate[2]).append(" +").append(player.getDefenseUpgrade()[2]).append(" Def x ").append(player.getDefenseUpgrade()[6]).append(" | ").append(defenseUpdate[3]).append(" +").append(player.getDefenseUpgrade()[3]).append(" Def x ").append(player.getDefenseUpgrade()[7]).append("  | ")
                         .append("\n----------------------------------------------------------------------------------")
-                        .append("\n| 3.- Mejora de catres   | ").append(bedUpdate[1]).append(" +").append(player.getBedsUpgrade()[1]).append(" Atk x ").append(player.getBedsUpgrade()[5]).append(" | ").append(bedUpdate[2]).append(" +").append(playerClass).append(player.getBedsUpgrade()[2]).append(playerClass).append(" Atk x ").append(player.getBedsUpgrade()[6]).append(" | ").append(bedUpdate[3]).append(" +").append(player.getBedsUpgrade()[3]).append(" Atk x ").append(player.getBedsUpgrade()[7]).append("  | ")
+                        .append("\n| 3.- Mejora de catres   | ").append(bedUpdate[1]).append(" +").append(player.getBedsUpgrade()[1]).append(" Cap x ").append(player.getBedsUpgrade()[5]).append(" | ").append(bedUpdate[2]).append(" +").append(player.getBedsUpgrade()[2]).append(" Cap x ").append(player.getBedsUpgrade()[6]).append(" | ").append(bedUpdate[3]).append(" +").append(player.getBedsUpgrade()[3]).append(" Cap x ").append(player.getBedsUpgrade()[7]).append("  | ")
                         .append("\n----------------------------------------------------------------------------------")
                         .append("\n| 0.-Salir  |")
                         .append("\n-------------\n"));
@@ -640,27 +649,27 @@ public class Menu {
 
                     player.buyArmor();
 
-                    System.out.println("\nLa armadura ha aumentado a " + player.getArmor());
+                    System.out.printf("\nLa armadura ha aumentado a %d \n", player.getArmor());
 
                 }
                 if (type == 1) {
 
                     player.buyCannonAmmo();
 
-                    System.out.println("\nHas comprado balas de cañon, munición actual: " + player.getCannon_ammo());
+                    System.out.printf("\nHas comprado balas de cañon, munición actual: %d \n", player.getCannon_ammo());
 
                 }
                 if (type == 2) {
 
                     player.buyMusketAmmo();
 
-                    System.out.println("\nHas comprado cargas de mosquete, munición actual: " + player.getMusket_ammo());
+                    System.out.printf("\nHas comprado cargas de mosquete, munición actual: %d \n", player.getMusket_ammo());
 
                 }
 
             } else {
 
-                System.out.println("\n" + typeS[type]);
+                System.out.printf("\n %s \n", typeS[type]);
 
             }
         } else {
@@ -689,7 +698,7 @@ public class Menu {
 
                 if(type==0){
                     
-                    System.out.println("\nLa adquisición de esta mejora aumenta el daño a " + player.getAttackUpgrade()[i] + " Atk");
+                    System.out.printf("\nLa adquisición de esta mejora aumenta el daño a %d Atk \n", player.getAttackUpgrade()[i]);
 
                     player.upgradeAttack(i);
                     
@@ -697,7 +706,7 @@ public class Menu {
                 
                 if(type==1){
                     
-                    System.out.println("\nLa adquisición de esta mejora aumenta la defensa a " + player.getDefenseUpgrade()[i] + " Def");
+                    System.out.printf("\nLa adquisición de esta mejora aumenta la defensa a %d Def \n", player.getDefenseUpgrade()[i]);
                             
                     player.upgradeDefense(i);
                     
@@ -705,7 +714,7 @@ public class Menu {
                 
                 if(type==2){
                     
-                    System.out.println("\nLa adquisición de esta mejora aumenta la capacidad a " + player.getBedsUpgrade()[i] + " catres");
+                    System.out.printf("\nLa adquisición de esta mejora aumenta la capacidad a %d catres \n", player.getBedsUpgrade()[i]);
                             
                     player.upgradeBeds(i);
                     
