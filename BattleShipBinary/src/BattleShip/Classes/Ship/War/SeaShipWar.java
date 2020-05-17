@@ -1,7 +1,7 @@
 
-package Classes.Ship.War;
+package BattleShip.Classes.Ship.War;
 
-import Classes.Ship.SeaShip;
+import BattleShip.Classes.Ship.SeaShip;
 
 public class SeaShipWar extends SeaShip {
     

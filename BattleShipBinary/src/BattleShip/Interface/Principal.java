@@ -1,7 +1,7 @@
 
-package Interface;
+package BattleShip.Interface;
 
-import Classes.Ship.SeaShip;
+import BattleShip.Classes.Ship.SeaShip;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;

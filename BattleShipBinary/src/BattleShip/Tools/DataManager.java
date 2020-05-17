@@ -1,10 +1,10 @@
 
-package Tools;
+package BattleShip.Tools;
 
-import Classes.Ship.War.SeaShipWar;
-import Classes.Ship.Schooner.SeaShipSchooner;
-import Classes.Ship.Frigate.SeaShipFrigate;
-import Classes.Ship.SeaShip;
+import BattleShip.Classes.Ship.War.SeaShipWar;
+import BattleShip.Classes.Ship.Schooner.SeaShipSchooner;
+import BattleShip.Classes.Ship.Frigate.SeaShipFrigate;
+import BattleShip.Classes.Ship.SeaShip;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -74,7 +74,7 @@ public class DataManager {
 
                 country = keyboard.nextInt();
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
         }
 
@@ -86,7 +86,7 @@ public class DataManager {
 
                 seaShip = keyboard.nextInt();
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
         }
 
@@ -115,7 +115,7 @@ public class DataManager {
 
                     increase = keyboard.nextInt();
                 
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
             } while (increase < 0 || increase > 3);
 
@@ -157,7 +157,7 @@ public class DataManager {
 
                 fos.close();
 
-            } catch (IOException e) {}
+            } catch (IOException e){System.err.println("Error: De entrada o salida");}
 
         }
 
@@ -187,7 +187,7 @@ public class DataManager {
 
                 increase = keyboard.nextInt();
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
         } while (increase != 0 && increase != Integer.parseInt(slotNames[6]) && increase != Integer.parseInt(slotNames[7]) && increase != Integer.parseInt(slotNames[8]));
 
@@ -224,9 +224,7 @@ public class DataManager {
                     delete = keyboard.nextInt();
 
 
-                } catch (InputMismatchException | NumberFormatException e) {
-                    keyboard.next();
-                }
+                } catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
             } while (delete != 0 && delete != Integer.parseInt(slotNames[6]) && delete != Integer.parseInt(slotNames[7]) && delete != Integer.parseInt(slotNames[8]));
 
@@ -340,7 +338,7 @@ public class DataManager {
             
                 option = keyboard.nextInt(); 
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
             
         }           
         
@@ -356,7 +354,7 @@ public class DataManager {
             
                 saveSlotInt = keyboard.nextInt();  
                 
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
                 
             }
 
@@ -451,7 +449,7 @@ public class DataManager {
                 
                 fos.close();
                 
-                }catch (IOException e){}
+                }catch (IOException e){System.err.println("Error: De entrada o salida");}
         
     }
     
@@ -526,9 +524,9 @@ public class DataManager {
                 }     
                 
             }
- 
-        }catch(EOFException e){   
-        }catch(IOException e){}
+        }catch(FileNotFoundException e){System.err.println("Error: Archivo no encontrado");
+        }catch(EOFException e){System.err.println("Error: Error en la lectura de archivo");   
+        }catch(IOException e){System.err.println("Error: De entrada o salida"); }
         
         return saveData;
         

@@ -1,8 +1,8 @@
 
-package Classes.Ship;
+package BattleShip.Classes.Ship;
 
-import Classes.Worker.Worker;
-import Tools.DataManager;
+import BattleShip.Classes.Worker.Worker;
+import BattleShip.Tools.DataManager;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ public abstract class SeaShip {
     private final int attack = 100;
     private final int defense = 75;
     private final int speed = 10;
-    private int defend [] = new int [2];                    /*DefensePlusPercentage - LoopTime*/
+    private final int defend [] = new int [2];                    /*DefensePlusPercentage - LoopTime*/
     private int health;
     private int armor;
     private int cannon_ammo;

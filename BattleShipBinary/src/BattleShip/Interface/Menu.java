@@ -1,9 +1,9 @@
 
-package Interface;
+package BattleShip.Interface;
 
-import Tools.DataManager;
-import Classes.Ship.Frigate.SeaShipFrigate;
-import Classes.Ship.SeaShip;
+import BattleShip.Tools.DataManager;
+import BattleShip.Classes.Ship.Frigate.SeaShipFrigate;
+import BattleShip.Classes.Ship.SeaShip;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class Menu {
 
                 loadType = keyboard.nextInt();
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
  
         
         switch(loadType){
@@ -98,7 +98,7 @@ public class Menu {
         
                 option = keyboard.nextInt();
                 
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
             switch(option){
                 
@@ -207,7 +207,7 @@ public class Menu {
 
                         optionPlayer = keyboard.nextInt();
                 
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
 
                 }
 
@@ -407,7 +407,7 @@ public class Menu {
 
             option = keyboard.nextInt();
                 
-        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
+        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
 
         switch(option){
             
@@ -446,7 +446,7 @@ public class Menu {
                     
                         fixIt = keyboard.nextInt();
                 
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
   
                 }
                 
@@ -460,7 +460,7 @@ public class Menu {
                         
                             fixIt = keyboard.nextInt();
                 
-                        }catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
                         
                         if(fixIt > fix){
                             
@@ -518,7 +518,7 @@ public class Menu {
 
                         workerNum = keyboard.nextInt();
                 
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
+                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
                     
                     if (workerNum + player.getBeds()[2]  > player.getBeds()[0]){
                         
@@ -601,7 +601,7 @@ public class Menu {
                 
                     upgrade = keyboard.nextInt();
                 
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1;}
+                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
                 
                 switch (upgrade){
                     

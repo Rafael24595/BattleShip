@@ -1,5 +1,5 @@
 
-package Classes.Worker;
+package BattleShip.Classes.Worker;
 
 public class Worker {
 
