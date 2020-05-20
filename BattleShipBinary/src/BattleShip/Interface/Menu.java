@@ -2,40 +2,32 @@
 package BattleShip.Interface;
 
 import BattleShip.Tools.DataManager;
-import BattleShip.Classes.Ship.Frigate.SeaShipFrigate;
 import BattleShip.Classes.Ship.SeaShip;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Menu {
     
-    public static SeaShip opening() throws IOException{
-        
-        Scanner keyboard = new Scanner(System.in);
-        
-        SeaShip myBoat = new SeaShipFrigate();
+    public static SeaShip opening() throws IOException{       
         
         ArrayList loadInf = new ArrayList();
         
-        ArrayList saveData = new ArrayList();
+        SeaShip myBoat;
+        
+        ArrayList saveData;
         
         int loadType =0;
         
         int increase = 1;
         
         while(loadType !=1 && loadType != 2){
-            
-            try{
                 
                 System.out.println("\n¿Qué desea hacer? \n1.-Crear partida nueva \n2.-Cargar partida \n3.-Borrar partida \n");
 
-                loadType = keyboard.nextInt();
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                loadType = DataManager.catchIntException();
  
+                
         
         switch(loadType){
             
@@ -82,7 +74,7 @@ public class Menu {
 
     public static void menu(SeaShip player) throws IOException{
         
-        ArrayList<SeaShip> myBoat = new ArrayList<SeaShip>();
+        ArrayList<SeaShip> myBoat = new ArrayList<>();
         
         myBoat.add(player);
         
@@ -91,14 +83,10 @@ public class Menu {
         Scanner keyboard = new Scanner(System.in);
         
         while(option != 0) {
-            
-            try{
                 
                 System.out.println("\n¿Qué deseas hacer? \n1.-Nueva partida \n2.-Combatir con enemigo customizado \n3.-Generar enemigo aleatoriamente \n4.-Modo historia(Cooming_Soon) \n5.-Puerto \n6.-Mostrar datos \n7.-Guardar progreso \n0.-Salir\n");
         
-                option = keyboard.nextInt();
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                option = DataManager.catchIntException();
 
             switch(option){
                 
@@ -168,8 +156,6 @@ public class Menu {
     
     public static void battleMenu(SeaShip player, SeaShip CPU) throws IOException{
         
-        Scanner keyboard = new Scanner(System.in);
-        
         System.out.printf("\nEnemigo %s está preparado para combatir\n", CPU.getName());
         
         int first = player.getSpeedP() - CPU.getSpeedP();
@@ -200,14 +186,10 @@ public class Menu {
             if (player.getTurn() <= 0) {
 
                 while (optionPlayer < 1 || optionPlayer > 5) {
-                    
-                    try{
                 
                         System.out.println("\n¿Qué quieres hacer? \n1.-Ataque de cañon \n2.-Ataque de mosquete \n3.-Defenderse \n4.-Mostrar datos \n5.-Huir\n");
 
-                        optionPlayer = keyboard.nextInt();
-                
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                        optionPlayer = DataManager.catchIntException();
 
                 }
 
@@ -280,9 +262,7 @@ public class Menu {
 
     }
     
-    public static void movement(SeaShip player, SeaShip CPU, int option, int type){
-        
-        Scanner keyboard = new Scanner(System.in);
+    public static void movement(SeaShip player, SeaShip CPU, int option, int type) throws IOException{
         
         String playerType [] = {"Atacas con una andanada al enemigo",String.format("%s te ha atacado una andanada", player.getName()), "Realizas una ataque de fusileros", String.format("%s ha realizado un ataque de fusileros", player.getName()), "Te has defendido", String.format("%s se ha defendido", CPU.getName())};
         
@@ -350,7 +330,7 @@ public class Menu {
                             
                             System.out.println(" 1.-Mostrar marineros                      2.-Salir\n");
                          
-                            show = keyboard.nextInt();
+                            show = DataManager.catchIntException();
                             
                         }
                          
@@ -379,9 +359,7 @@ public class Menu {
         
     }
     
-    public static void shopMenu(SeaShip player){
-        
-        Scanner keyboard = new Scanner(System.in);
+    public static void shopMenu(SeaShip player) throws IOException{
         
         int option = 1;
         
@@ -392,8 +370,6 @@ public class Menu {
         System.out.println(new StringBuilder("\n------------------------")
                                      .append("\n|  Almacén del puerto  |                            Oro: ").append(player.getGold())
                                      .append("\n------------------------                           -------------- \n"));
-
-        try{
             
             System.out.println(new StringBuilder(" ¿Qué desea hacer?\n")
                                                 .append("\n1.-Reparar navío: 1PV x ").append(player.getPrices()[3])
@@ -405,9 +381,7 @@ public class Menu {
                                                 .append(" \n6.-Comprar mejoras para el navío"
                                                       + " \n0.-Salir\n"));
 
-            option = keyboard.nextInt();
-                
-        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
+            option = DataManager.catchIntException();
 
         switch(option){
             
@@ -438,29 +412,21 @@ public class Menu {
                 
                 System.out.printf(" puntos de salud por %d doblones.\n", fix * player.getPrices()[3]);
                 
-                while(fixIt != 1 && fixIt != 2){
-                    
-                    try{
+                while(fixIt != 1 && fixIt != 2){             
                 
                          System.out.println("\n¿Está de acuedo? \n1.-Sí \n2.-No\n");
                     
-                        fixIt = keyboard.nextInt();
-                
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                        fixIt = DataManager.catchIntException();
   
                 }
                 
                 if (fixIt == 2){
                     
                     do{
-                        
-                        try{
                 
                             System.out.println("\n¿Cuantos puntos de salud desea recuperar?\n");
                         
-                            fixIt = keyboard.nextInt();
-                
-                        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                            fixIt = DataManager.catchIntException();
                         
                         if(fixIt > fix){
                             
@@ -511,14 +477,10 @@ public class Menu {
                 int workerNum = -1;
                 
                 while((workerNum < 0 || workerNum + player.getBeds()[2] > player.getBeds()[0] || workerNum * player.getPrices()[2] > player.getGold()) && workerNum != 0){
-                    
-                    try{
                 
                         System.out.println(String.format("\n¿Cuantos marineros desea contratar?                               Tripulación actual: %d/%d\n", player.getBeds()[2], player.getBeds()[0]));
 
-                        workerNum = keyboard.nextInt();
-                
-                    }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
+                        workerNum = DataManager.catchIntException();
                     
                     if (workerNum + player.getBeds()[2]  > player.getBeds()[0]){
                         
@@ -597,11 +559,9 @@ public class Menu {
                         .append("\n| 0.-Salir  |")
                         .append("\n-------------\n"));
                 
-                try{
+                    upgrade = DataManager.catchIntException();
                 
-                    upgrade = keyboard.nextInt();
-                
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); option = -1; System.out.println("\nIntroduce uno de los números indicados");}
+                }
                 
                 switch (upgrade){
                     
@@ -623,9 +583,7 @@ public class Menu {
                         
                     break;
                     
-                }
-                
-                }
+                }  
                 
             break;
 

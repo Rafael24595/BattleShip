@@ -9,8 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 public abstract class SeaShip {
     
@@ -282,8 +280,6 @@ public abstract class SeaShip {
     
     public SeaShip createDummyShip(int random) throws IOException {
         
-        Scanner keyboard = new Scanner(System.in);
-        
         ArrayList<SeaShip> CPU_Boat = new ArrayList<>();
         
         ArrayList data = new ArrayList();
@@ -298,13 +294,13 @@ public abstract class SeaShip {
 
             if (random != 1) {
 
-                try {
-
+                while(option < 0 || option > 3){
+                    
                     System.out.println("\n¿Contra qué clase de navío quieres luchar? \n1.-Goleta \n2.-Fragata \n3.-Buque \n0.-Atrás \n");
 
-                    option = keyboard.nextInt();
-
-                } catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                    option = DataManager.catchIntException();
+                    
+                }
 
             } else {
 
@@ -344,13 +340,9 @@ public abstract class SeaShip {
 
                 if (random != 1) {
 
-                    try {
-
                         System.out.println("\n¿A qué nivel quieres que se encuentre? \n1.-Mínimo \n2.-Medio \n3.-Alto \n0.-Atrás\n");
 
-                        level = keyboard.nextInt();
-
-                    } catch (InputMismatchException | NumberFormatException e) {keyboard.next();}
+                        level = DataManager.catchIntException();
 
                     if (level == 0) {
 
@@ -542,7 +534,7 @@ public abstract class SeaShip {
         
         for (int i = 0; i < deads; i++) {
             
-            int random = (int)Math.random()*size + 1;
+            int random = (int) (Math.random() * size + 1);
             
             worker_list.remove(random);
             
@@ -923,6 +915,7 @@ public abstract class SeaShip {
         return worker_list;
     }
     
+    @Override
     public String toString(){
         
         String countryS [] = {"España", "Francia", "Gran Bretaña"};
@@ -956,7 +949,7 @@ public abstract class SeaShip {
         setTurn();
         
         StringBuilder data = new StringBuilder("\n====================================================");
-        data.append("\n| Capitan: ").append(this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()]).append(" ").append(this.worker_list.get(0).getSubnameS()[this.worker_list.get(0).getSubname()]).append(" | Nacionalidad: " + countryS[country]);
+        data.append("\n| Capitan: ").append(this.worker_list.get(0).getNameS()[this.worker_list.get(0).getName()]).append(" ").append(this.worker_list.get(0).getSubnameS()[this.worker_list.get(0).getSubname()]).append(" | Nacionalidad: ").append(countryS[country]);
         data.append("\n----------------------------------------------------");
         data.append("\n| Tipo de navío: ").append(boat).append(" | Salud: ").append(getHealth()).append(" | Blindaje: ").append(getArmor()).append(" ");
         data.append("\n----------------------------------------------------");

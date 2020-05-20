@@ -67,26 +67,18 @@ public class DataManager {
         }
 
         while (country < 1 || country > 3) {
-
-            try{
                 
                 System.out.println("\nAhora elige una de las siguientes naciones: \n1.-España \n2.-Gran Bretaña \n3.-Francia\n");
 
-                country = keyboard.nextInt();
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                country = DataManager.catchIntException();
 
         }
 
         while (seaShip < 1 || seaShip > 3) {
-
-            try{
                 
                 System.out.println("\nIntroduce la clase de navio que quieres: \n1.-Goleta \n2.-Fragata \n3.-Buque\n");
 
-                seaShip = keyboard.nextInt();
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                seaShip = DataManager.catchIntException();
 
         }
 
@@ -108,14 +100,10 @@ public class DataManager {
             String[] slotNames = DataManager.fileName();
 
             do {
-
-                try{
                 
                     System.out.printf("\nTodas las ranuras están ocupadas ¿Quieres sobrescribir alguna? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Salir\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
-                    increase = keyboard.nextInt();
-                
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                    increase = DataManager.catchIntException();
 
             } while (increase < 0 || increase > 3);
 
@@ -170,8 +158,6 @@ public class DataManager {
     }
 
     public static ArrayList loadData(int loadType) throws IOException {
-
-        Scanner keyboard = new Scanner(System.in);
         
         String[] slotNames = DataManager.fileName();
 
@@ -180,14 +166,10 @@ public class DataManager {
         int increase = 1;
 
         do {
-
-            try{
                 
                 System.out.printf("\nPartidas disponibles \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
-                increase = keyboard.nextInt();
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                increase = DataManager.catchIntException();
 
         } while (increase != 0 && increase != Integer.parseInt(slotNames[6]) && increase != Integer.parseInt(slotNames[7]) && increase != Integer.parseInt(slotNames[8]));
 
@@ -206,8 +188,6 @@ public class DataManager {
     }
     
     public static void deleteSaveFile() throws IOException{
-        
-        Scanner keyboard = new Scanner(System.in);
 
         String[] slotNames = DataManager.fileName();
 
@@ -217,14 +197,9 @@ public class DataManager {
 
             do {
 
-                try {
-
                     System.out.printf("\n¿Qué partida quieres borrar? \n1.-%s -> %s\n2.-%s -> %s\n3.-%s -> %s\n0.-Atras\n\n", slotNames[0], slotNames[3], slotNames[1], slotNames[4], slotNames[2], slotNames[5]);
 
-                    delete = keyboard.nextInt();
-
-
-                } catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                    delete = DataManager.catchIntException();
 
             } while (delete != 0 && delete != Integer.parseInt(slotNames[6]) && delete != Integer.parseInt(slotNames[7]) && delete != Integer.parseInt(slotNames[8]));
 
@@ -316,8 +291,6 @@ public class DataManager {
     
     public static void saveData(SeaShip seaShip) throws IOException{
         
-        Scanner keyboard = new Scanner (System.in);
-        
         int saveSlotInt = seaShip.getSaveSlot();
         
         int option = 0;
@@ -331,14 +304,10 @@ public class DataManager {
         String[] slotNames = DataManager.fileName();
         
         while(option != 1 && option != 2){
-            
-            try{
                 
                 System.out.println("\n¿Deseas guardar en la ranura por defecto? \n1.-Sí \n2.-No\n");
             
-                option = keyboard.nextInt(); 
-                
-            }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                option = DataManager.catchIntException();
             
         }           
         
@@ -348,13 +317,9 @@ public class DataManager {
             
             while (saveSlotInt < 0 || saveSlotInt > 3){
                 
-                try{
-                
                 System.out.printf("\n¿Qué ranura deseas sobreescribir? \n1.-%s\n2.-%s\n3.-%s\n\n", slotNames[0], slotNames[1], slotNames[2]);
             
-                saveSlotInt = keyboard.nextInt();  
-                
-                }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+                saveSlotInt = DataManager.catchIntException();
                 
             }
 
@@ -525,7 +490,7 @@ public class DataManager {
                 
             }
         }catch(FileNotFoundException e){System.err.println("Error: Archivo no encontrado");
-        }catch(EOFException e){System.err.println("Error: Error en la lectura de archivo");   
+        }catch(EOFException e){System.out.println("\nArchivo leido");   
         }catch(IOException e){System.err.println("Error: De entrada o salida"); }
         
         return saveData;
@@ -583,6 +548,20 @@ public class DataManager {
         }
         
         return slotNames;
+    }
+    
+    public static int catchIntException() throws IOException {
+ 
+        Scanner keyboard = new Scanner(System.in);
+            
+            try{
+            
+            return keyboard.nextInt();
+            
+        }catch (InputMismatchException | NumberFormatException e) {keyboard.next(); System.out.println("\nIntroduce uno de los números indicados");}
+            
+            return -1;
+            
     }
     
 }
